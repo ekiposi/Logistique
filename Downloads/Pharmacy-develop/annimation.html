@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="refresh" content="3; url=index.html">
+  <title>Système de CHNDLM S.A - Pharma</title>
+  <link rel="stylesheet" href="css/output.css">
+  <link rel="stylesheet" href="css/all.min.css">
+  <link href="fonts/LexendDecaRegular.ttf" rel="stylesheet">
+  <link rel="stylesheet" href="fontawesome/css/all.min.css">
+  
+  <style>
+    @font-face {
+        font-family: 'LexendDeca';
+        src: url('fonts/LexendDecaRegular.ttf') format('truetype');
+        font-weight: normal;
+        font-style: normal;
+    }
+
+    body {
+        font-family: 'LexendDeca', sans-serif;
+    }
+</style>
+</head>
+<body class="bg-gradient-to-b from-green-400 via-green-300 to-green-200 text-black text-center min-h-screen flex flex-col items-center justify-center p-6">
+  <!-- Titre de la page -->
+  <h1 class="text-4xl font-bold mb-6 animate-slide-in">Bienvenue dans le système de CHNDLM S.A - Pharma</h1>
+
+  <!-- Animation cardio -->
+  <div class="cardio-container mb-10 animate-fade-in">
+    <l-cardio size="100" stroke="8" speed="1" color="#000000"></l-cardio>
+  </div>
+
+  <!-- Message de bienvenue -->
+  <p class="text-xl mb-10">Nous sommes heureux de vous accueillir dans notre système.</p>
+
+  <!-- Icônes liées à la pharmacie -->
+  <div class="flex justify-center gap-10">
+    <i class="fas fa-pills text-4xl text-black hover:text-green-600 transition-transform transform hover:scale-110"></i>
+    <i class="fas fa-prescription-bottle-alt text-4xl text-black hover:text-green-600 transition-transform transform hover:scale-110"></i>
+    <i class="fas fa-capsules text-4xl text-black hover:text-green-600 transition-transform transform hover:scale-110"></i>
+    <i class="fas fa-heartbeat text-4xl text-black hover:text-green-600 transition-transform transform hover:scale-110"></i>
+  </div>
+
+  <!-- Script pour l'animation cardio -->
+  <script type="module" src="https://cdn.jsdelivr.net/npm/ldrs/dist/auto/cardio.js"></script>
+  
+  <!-- Ajout des animations personnalisées avec Tailwind -->
+  <style>
+    @keyframes slide-in {
+      0% { opacity: 0; transform: translateY(-20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fade-in {
+      0% { opacity: 0; transform: scale(0.8); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    .animate-slide-in {
+      animation: slide-in 1.5s ease-in-out;
+    }
+    .animate-fade-in {
+      animation: fade-in 2s ease-in-out;
+    }
+  </style>
+</body>
+</html>

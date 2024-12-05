@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion - Système de Gestion des Médicaments CHNDLM S.A - Pharma</title>
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+    <script src="js/jspdf.umd.min.js"></script>
+    <script src="js/jspdf.plugin.autotable.min.js"></script>
+    <link rel="stylesheet" href="css/tailwind.min.css">
+    <link href="fonts/LexendDecaRegular.ttf" rel="stylesheet">
+   
+        <style>
+    @font-face {
+        font-family: 'LexendDeca';
+        src: url('fonts/LexendDecaRegular.ttf') format('truetype');
+        font-weight: normal;
+        font-style: normal;
+    }
+
+    body {
+        font-family: 'LexendDeca', sans-serif;
+    }
+</style>
+
+    
+</head>
+<body class="bg-gray-100">
+    <div class="flex items-center justify-center min-h-screen">
+        <div class="login-card bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+            <h1 class="text-2xl font-bold text-green-600 flex items-center mb-6">
+                <i class="fas fa-clinic-medical mr-3"></i> Système de Gestion des Médicaments - CHNDLM S.A - Pharma
+            </h1>
+            <form id="loginForm" class="space-y-4">
+                <div class="input-group flex items-center border border-gray-300 rounded-lg p-2">
+                    <i class="fas fa-user text-green-500 mr-3"></i>
+                    <input type="text" id="username" placeholder="Nom d'utilisateur" required class="w-full outline-none">
+                </div>
+                <div class="input-group flex items-center border border-gray-300 rounded-lg p-2 relative">
+                    <i class="fas fa-lock text-green-500 mr-3"></i>
+                    <input type="password" id="password" placeholder="Mot de passe" required class="w-full outline-none">
+                    <span id="togglePassword" class="fas fa-eye text-gray-500 cursor-pointer absolute right-3"></span>
+                </div>
+                <button type="submit" class="btn w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg">
+                    <i class="fas fa-sign-in-alt mr-2"></i> Connexion
+                </button>
+            </form>
+            <p id="message" class="hidden mt-4 text-red-600"></p>
+
+            <div id="resetPasswordSection" class="hidden mt-6">
+                <input type="text" id="secretCode" placeholder="Entrez le code secret" class="w-full border border-gray-300 rounded-lg p-2 mb-4">
+                <button id="verifyCode" class="btn w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">Vérifier le code</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="text-center mt-10 text-gray-600">
+        <p>
+            <i class="fas fa-copyright"></i> 2024 CHNDLM S.A - Pharma - Tous droits réservés | Conçu par NexGen Spark
+        </p>
+    </footer>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
