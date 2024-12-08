@@ -417,10 +417,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td>${device.quantity}</td>
                 <td>${device.dateAdded}</td>
                 <td>${device.function}</td>
+                <td>${device.isLowStock ? 'Oui' : 'Non'}</td>
                 <td>${device.additionalInfo}</td>
                 <td>
-                    <button onclick="showDeviceForm(${index})" class="bg-blue-400 hover:bg-blue-500 text-white font-bold py-1 px-2 rounded-lg mr-2">Modifier</button>
-                    <button onclick="deleteDevice(${index})" class="bg-red-400 hover:bg-red-500 text-white font-bold py-1 px-2 rounded-lg">Supprimer</button>
+                    <button onclick="showDeviceForm(${index})" class="text-black py-1 px-2 rounded-lg mr-2">Modifier</button>
+                    <button onclick="deleteDevice(${index})" class="text-black py-1 px-2 rounded-lg">Supprimer</button>
                 </td>
             </tr>
         `).join('');
@@ -437,8 +438,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td>${equip.isLowStock ? 'Oui' : 'Non'}</td>
                 <td>${equip.additionalInfo}</td>
                 <td>
-                    <button onclick="showEquipmentForm(${index})" class="bg-blue-400 hover:bg-blue-500 text-white font-bold py-1 px-2 rounded-lg mr-2">Modifier</button>
-                    <button onclick="deleteEquipment(${index})" class="bg-red-400 hover:bg-red-500 text-white font-bold py-1 px-2 rounded-lg">Supprimer</button>
+                    <button onclick="showEquipmentForm(${index})" class="text-black py-1 px-2 rounded-lg mr-2">Modifier</button>
+                    <button onclick="deleteEquipment(${index})" class="text-black py-1 px-2 rounded-lg">Supprimer</button>
                 </td>
             </tr>
         `).join('');
