@@ -370,7 +370,7 @@ document.addEventListener('DOMContentLoaded', () => {
             dateAdded: document.getElementById("device-date").value,
             function: document.getElementById("device-function").value,
             additionalInfo: document.getElementById("device-info").value,
-            isLowStock: parseInt(document.getElementById("device-quantity").value) < 10
+            isLowStock: parseInt(document.getElementById("device-quantity").value) < 4
         };
 
         // Check if any required field is empty
@@ -404,7 +404,7 @@ document.addEventListener('DOMContentLoaded', () => {
             function: document.getElementById("equip-function").value,
             type: document.getElementById("equip-type").value,
             additionalInfo: document.getElementById("equip-info").value,
-            isLowStock: parseInt(document.getElementById("equip-quantity").value) < 10
+            isLowStock: parseInt(document.getElementById("equip-quantity").value) < 4
         };
 
         // Check if any required field is empty
