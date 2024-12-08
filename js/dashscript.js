@@ -38,6 +38,25 @@ document.addEventListener('DOMContentLoaded', () => {
         return expDate <= currentDate;
     };
 
+    const loadData = () => {
+        // Load medications
+        const storedMedications = localStorage.getItem('medications');
+        medications = storedMedications ? JSON.parse(storedMedications) : [];
+
+        // Load devices
+        const storedDevices = localStorage.getItem('devices');
+        devices = storedDevices ? JSON.parse(storedDevices) : [];
+
+        // Load equipment
+        const storedEquipment = localStorage.getItem('equipment');
+        equipment = storedEquipment ? JSON.parse(storedEquipment) : [];
+
+        // Render all tables
+        renderFilteredTable();
+        renderDeviceTable();
+        renderEquipmentTable();
+    };
+
     const loadMedications = () => {
         try {
             const storedMedications = localStorage.getItem('medications');
@@ -214,10 +233,9 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const initializeApp = () => {
-        loadMedications();
+        loadData();
         setupEventListeners();
-        renderFilteredTable();
-        generateMedicationReport();
+        updateDashboardCards();
     };
 
     window.showMedicationForm = showMedicationForm;
