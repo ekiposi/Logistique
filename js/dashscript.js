@@ -33,9 +33,13 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const isDateExpired = (expirationDate) => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // Reset time part to compare dates only
+        
         const expDate = new Date(expirationDate);
-        const currentDate = new Date();
-        return expDate <= currentDate;
+        expDate.setHours(0, 0, 0, 0); // Reset time part to compare dates only
+        
+        return expDate <= today; // Will return true if expDate is today or earlier
     };
 
     const loadData = () => {
@@ -129,34 +133,80 @@ document.addEventListener('DOMContentLoaded', () => {
         elements.medicationFormContainer.classList.add("hidden");
     };
 
-    const renderFilteredTable = () => {
-        const searchValue = elements.searchBar.value.toLowerCase();
-        const filterCategory = elements.categoryFilter.value;
-        const showExpired = elements.expiredFilter.checked;
-        const showLowStock = elements.lowStockFilter.checked;
+    const downloadMedicationsPDF = () => {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
 
-        const filteredMedications = medications.filter(med => 
-            med.name.toLowerCase().includes(searchValue) &&
-            (!filterCategory || med.category === filterCategory) &&
-            (!showExpired || med.isExpired) &&
-            (!showLowStock || med.isLowStock)
-        );
+        // Create table data manually instead of using html selector
+        const tableColumn = ["Nom", "Quantité", "Prix", "Date d'expiration", "Catégorie", "Périmé", "Quantité Faible"];
+        const tableRows = medications.map(med => [
+            med.name,
+            med.quantity,
+            formatCurrency(parseFloat(med.price)),
+            med.expirationDate,
+            med.category,
+            isDateExpired(med.expirationDate) ? 'Oui' : 'Non',
+            parseInt(med.quantity) < 11 ? 'Oui' : 'Non'
+        ]);
 
-        elements.medicationTable.innerHTML = filteredMedications.map((med, index) => `
-            <tr>
-                <td>${med.name}</td>
-                <td>${med.quantity}</td>
-                <td>${formatCurrency(parseFloat(med.price))}</td>
-                <td>${med.expirationDate}</td>
-                <td>${med.category}</td>
-                <td>${med.isExpired ? 'Oui' : 'Non'}</td>
-                <td>${med.isLowStock ? 'Oui' : 'Non'}</td>
-                <td>
-                    ${!med.isExpired ? `<button onclick="showMedicationForm(${index})">Modifier</button>` : ''}
-                    <button onclick="deleteMedication(${index})">Supprimer</button>
-                </td>
-            </tr>
-        `).join('');
+        doc.setFontSize(16);
+        doc.text('CENTRE HOSPITALIER NOTRE DAME DE LA MERCI S.A - Pharma', 105, 20, { align: 'center' });
+        doc.setFontSize(10);
+        doc.text('Adresse : 5, Rue Rivière en face du Rectorat de l\'UEH', 105, 30, { align: 'center' });
+        doc.text('Email: pharmachndlm@gmail.com', 105, 35, { align: 'center' });
+        doc.text('Téléphone: +509 2910-3131', 105, 40, { align: 'center' });
+
+        doc.setLineWidth(0.5);
+        doc.line(10, 45, 200, 45);
+
+        doc.setFontSize(14);
+        doc.text('Liste des Médicaments', 105, 55, { align: 'center' });
+        doc.text(`Date: ${new Date().toLocaleString()}`, 105, 65, { align: 'center' });
+
+        doc.autoTable({
+            head: [tableColumn],
+            body: tableRows,
+            startY: 75,
+            theme: 'striped',
+            headStyles: { fillColor: [60, 141, 188] },
+        });
+
+        doc.save('liste_medicaments.pdf');
+    };
+
+    const renderFilteredTable = (dataToRender = medications) => {
+        elements.medicationTable.innerHTML = dataToRender.map((med, index) => {
+            const isLowStock = parseInt(med.quantity) < 4;
+            const expired = isDateExpired(med.expirationDate);
+            
+            return `
+                <tr>
+                    <td>${med.name}</td>
+                    <td>${med.quantity}</td>
+                    <td>${formatCurrency(parseFloat(med.price))}</td>
+                    <td>${med.expirationDate}</td>
+                    <td>${med.category}</td>
+                    <td>${expired ? 'Oui' : 'Non'}</td>
+                    <td>${isLowStock ? 'Oui' : 'Non'}</td>
+                    <td>
+                        <button onclick="showMedicationForm(${index})" class="text-black py-1 px-2 rounded-lg mr-2">Modifier</button>
+                        <button onclick="deleteMedication(${index})" class="text-black py-1 px-2 rounded-lg">Supprimer</button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+
+        // Add download button if it doesn't exist
+        if (!document.querySelector('#medication-pdf-button')) {
+            const medicationSection = document.querySelector('#medication-table').closest('section');
+            medicationSection.insertAdjacentHTML('beforebegin', `
+                <div class="flex justify-end mb-4">
+                    <button id="medication-pdf-button" onclick="downloadMedicationsPDF()" class="text-white py-2 px-4 rounded-lg bg-blue-400 hover:bg-blue-500">
+                        Télécharger PDF Médicaments
+                    </button>
+                </div>
+            `);
+        }
     };
 
     const generateMedicationReport = () => {
@@ -230,12 +280,75 @@ document.addEventListener('DOMContentLoaded', () => {
         
         elements.addEquipmentBtn.addEventListener("click", () => showEquipmentForm());
         elements.equipmentForm.addEventListener("submit", handleEquipmentSubmit);
+
+        // Add search functionality for all tables
+        elements.searchBar.addEventListener('input', () => {
+            const searchTerm = elements.searchBar.value.toLowerCase();
+            
+            // Filter and render medications
+            const filteredMedications = medications.filter(med => 
+                med.name.toLowerCase().includes(searchTerm) ||
+                med.category?.toLowerCase().includes(searchTerm)
+            );
+            renderFilteredTable(filteredMedications);
+
+            // Filter and render devices
+            const filteredDevices = devices.filter(device => 
+                device.name.toLowerCase().includes(searchTerm) ||
+                device.function.toLowerCase().includes(searchTerm) ||
+                device.additionalInfo?.toLowerCase().includes(searchTerm)
+            );
+            renderDeviceTable(filteredDevices);
+
+            // Filter and render equipment
+            const filteredEquipment = equipment.filter(equip => 
+                equip.name.toLowerCase().includes(searchTerm) ||
+                equip.function.toLowerCase().includes(searchTerm) ||
+                equip.type.toLowerCase().includes(searchTerm) ||
+                equip.additionalInfo?.toLowerCase().includes(searchTerm)
+            );
+            renderEquipmentTable(filteredEquipment);
+        });
     };
 
     const initializeApp = () => {
         loadData();
         setupEventListeners();
-        updateDashboardCards();
+        
+        // Add download buttons for all tables
+        const addDownloadButtons = () => {
+            // Device table button
+            const deviceTable = document.querySelector('#device-table');
+            if (deviceTable && !document.querySelector('#device-pdf-button')) {
+                deviceTable.parentElement.insertAdjacentHTML('afterbegin', `
+                    <div class="flex justify-end mb-4">
+                        <button id="device-pdf-button" onclick="downloadDevicesPDF()" class="text-white py-2 px-4 rounded-lg bg-blue-400 hover:bg-blue-500">
+                            Télécharger PDF Appareils
+                        </button>
+                    </div>
+                `);
+            }
+
+            // Equipment table button
+            const equipmentTable = document.querySelector('#equipment');
+            if (equipmentTable && !document.querySelector('#equipment-pdf-button')) {
+                equipmentTable.parentElement.insertAdjacentHTML('afterbegin', `
+                    <div class="flex justify-end mb-4">
+                        <button id="equipment-pdf-button" onclick="downloadEquipmentPDF()" class="text-white bg-blue-400 py-2 px-4 rounded-lg">
+                            Télécharger PDF Équipements
+                        </button>
+                    </div>
+                `);
+            }
+        };
+
+        // Add the buttons
+        addDownloadButtons();
+        
+        // Render all tables
+        renderFilteredTable();
+        renderDeviceTable();
+        renderEquipmentTable();
     };
 
     window.showMedicationForm = showMedicationForm;
@@ -305,7 +418,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // document.getElementById('received-count').textContent = getReceivedCount();
     }
 
-    const showDeviceForm = (index = -1) => {
+    window.showDeviceForm = (index = -1) => {
         // Toggle visibility
         elements.deviceFormContainer.classList.toggle("hidden");
         
@@ -319,21 +432,23 @@ document.addEventListener('DOMContentLoaded', () => {
         if (index === -1) {
             formTitle.innerText = "Ajouter un appareil médical";
             elements.deviceForm.reset();
-            // Set current date for dateAdded
-            document.getElementById("device-date").valueAsDate = new Date();
+            // Format today's date as YYYY-MM-DD
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById("device-date").value = today;
             editingIndex = -1;
         } else {
             formTitle.innerText = "Modifier un appareil médical";
             const device = devices[index];
-            ['device-name', 'device-quantity', 'device-date', 'device-function', 'device-info'].forEach(id => {
-                const field = document.getElementById(id);
-                field.value = device[field.name.replace('device-', '')];
-            });
+            document.getElementById("device-name").value = device.name || '';
+            document.getElementById("device-quantity").value = device.quantity || '';
+            document.getElementById("device-date").value = device.dateAdded || new Date().toISOString().split('T')[0];
+            document.getElementById("device-function").value = device.function || '';
+            document.getElementById("device-info").value = device.additionalInfo || '';
             editingIndex = index;
         }
     };
 
-    const showEquipmentForm = (index = -1) => {
+    window.showEquipmentForm = (index = -1) => {
         // Toggle visibility
         elements.equipmentFormContainer.classList.toggle("hidden");
         
@@ -347,16 +462,19 @@ document.addEventListener('DOMContentLoaded', () => {
         if (index === -1) {
             formTitle.innerText = "Ajouter un équipement médical";
             elements.equipmentForm.reset();
-            // Set current date for dateAdded
-            document.getElementById("equip-date").valueAsDate = new Date();
+            // Format today's date as YYYY-MM-DD
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById("equip-date").value = today;
             editingIndex = -1;
         } else {
             formTitle.innerText = "Modifier un équipement médical";
             const equip = equipment[index];
-            ['equip-name', 'equip-quantity', 'equip-date', 'equip-function', 'equip-type', 'equip-info'].forEach(id => {
-                const field = document.getElementById(id);
-                field.value = equip[field.name.replace('equip-', '')];
-            });
+            document.getElementById("equip-name").value = equip.name || '';
+            document.getElementById("equip-quantity").value = equip.quantity || '';
+            document.getElementById("equip-date").value = equip.dateAdded || new Date().toISOString().split('T')[0];
+            document.getElementById("equip-function").value = equip.function || '';
+            document.getElementById("equip-type").value = equip.type || '';
+            document.getElementById("equip-info").value = equip.additionalInfo || '';
             editingIndex = index;
         }
     };
@@ -443,6 +561,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 </td>
             </tr>
         `).join('');
+
+        // Add download button if it doesn't exist
+        if (!document.querySelector('#device-pdf-button')) {
+            const deviceTable = document.querySelector('#device-table');
+            if (deviceTable) {
+                deviceTable.insertAdjacentHTML('beforebegin', `
+                    <div class="flex justify-end mb-4">
+                        <button id="device-pdf-button" onclick="downloadDevicesPDF()" class="text-white bg-blue-400 py-2 px-4 rounded-lg">
+                            Télécharger PDF Appareils
+                        </button>
+                    </div>
+                `);
+            }
+        }
     };
 
     const renderEquipmentTable = () => {
@@ -461,6 +593,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 </td>
             </tr>
         `).join('');
+
+        // Add download button if it doesn't exist
+        if (!document.querySelector('#equipment-pdf-button')) {
+            const equipmentTable = document.querySelector('#equipment');
+            if (equipmentTable) {
+                equipmentTable.insertAdjacentHTML('beforebegin', `
+                    <div class="flex justify-end mb-4">
+                        <button id="equipment-pdf-button" onclick="downloadEquipmentPDF()" class="text-white bg-blue-400 py-2 px-4 rounded-lg">
+                            Télécharger PDF Équipements
+                        </button>
+                    </div>
+                `);
+            }
+        }
     };
 
     // Add these to your window object
@@ -481,5 +627,101 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    const downloadDevicesPDF = () => {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        // Create table data manually
+        const tableColumn = ["Nom", "Quantité", "Date d'ajout", "Fonction", "Quantité Faible", "Informations", "Action"];
+        const tableRows = devices.map(device => [
+            device.name,
+            device.quantity,
+            device.dateAdded,
+            device.function,
+            device.isLowStock ? 'Oui' : 'Non',
+            device.additionalInfo,
+            '' // Empty action column for PDF
+        ]);
+
+        doc.setFontSize(16);
+        doc.text('CENTRE HOSPITALIER NOTRE DAME DE LA MERCI S.A - Pharma', 105, 20, { align: 'center' });
+        doc.setFontSize(10);
+        doc.text('Adresse : 5, Rue Rivière en face du Rectorat de l\'UEH', 105, 30, { align: 'center' });
+        doc.text('Email: pharmachndlm@gmail.com', 105, 35, { align: 'center' });
+        doc.text('Téléphone: +509 2910-3131', 105, 40, { align: 'center' });
+
+        doc.setLineWidth(0.5);
+        doc.line(10, 45, 200, 45);
+
+        doc.setFontSize(14);
+        doc.text('Liste des Appareils', 105, 55, { align: 'center' });
+        doc.text(`Date: ${new Date().toLocaleString()}`, 105, 65, { align: 'center' });
+
+        doc.autoTable({
+            html: '#device-table',
+            startY: 75,
+            theme: 'striped',
+            headStyles: { fillColor: [60, 141, 188] },
+        });
+
+        doc.save('liste_appareils.pdf');
+    };
+
+    const downloadEquipmentPDF = () => {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        // Create table data manually
+        const tableColumn = ["Nom", "Quantité", "Date d'ajout", "Fonction", "Type", "Quantité Faible", "Informations", "Action"];
+        const tableRows = equipment.map(equip => [
+            equip.name,
+            equip.quantity,
+            equip.dateAdded,
+            equip.function,
+            equip.type,
+            equip.isLowStock ? 'Oui' : 'Non',
+            equip.additionalInfo,
+             // Empty action column for PDF
+        ]);
+
+        doc.setFontSize(16);
+        doc.text('CENTRE HOSPITALIER NOTRE DAME DE LA MERCI S.A - Pharma', 105, 20, { align: 'center' });
+        doc.setFontSize(10);
+        doc.text('Adresse : 5, Rue Rivière en face du Rectorat de l\'UEH', 105, 30, { align: 'center' });
+        doc.text('Email: pharmachndlm@gmail.com', 105, 35, { align: 'center' });
+        doc.text('Téléphone: +509 2910-3131', 105, 40, { align: 'center' });
+
+        doc.setLineWidth(0.5);
+        doc.line(10, 45, 200, 45);
+
+        doc.setFontSize(14);
+        doc.text('Liste des Équipements', 105, 55, { align: 'center' });
+        doc.text(`Date: ${new Date().toLocaleString()}`, 105, 65, { align: 'center' });
+
+        doc.autoTable({
+            head: [tableColumn],
+            body: tableRows,
+            startY: 75,
+            theme: 'striped',
+            headStyles: { fillColor: [60, 141, 188] }
+        });
+
+        doc.save('liste_equipements.pdf');
+    };
+
+    // Make all functions available globally
+    window.downloadMedicationsPDF = downloadMedicationsPDF;
+    window.downloadDevicesPDF = downloadDevicesPDF;
+    window.downloadEquipmentPDF = downloadEquipmentPDF;
+    window.showMedicationForm = showMedicationForm;
+    window.deleteMedication = deleteMedication;
+    window.showDeviceForm = showDeviceForm;
+    window.showEquipmentForm = showEquipmentForm;
+    window.deleteDevice = deleteDevice;
+    window.deleteEquipment = deleteEquipment;
+    
+    // Initialize
+    loadData();
+    setupEventListeners();
     initializeApp();
 });

@@ -11,6 +11,8 @@
     <script src="data.js"></script>
     <link rel="stylesheet" href="css/dashstyle.css">
     <script src="js/dashscript.js"></script>
+    <script src="js/jspdf.umd.min.js"></script>
+    <script src="js/jspdf.plugin.autotable.min.js"></script>
     <style>
         @font-face {
             font-family: 'LexendDeca';
@@ -32,7 +34,7 @@
 <body class="bg-gray-100">
     <header class="bg-green-200 text-black p-6 shadow-lg">
         <div class="container mx-auto flex flex-col md:flex-row justify-between items-center">
-            <h1 class="text-3xl font-bold mb-4 md:mb-0">Tableau de Bord - CHNDLM S.A - Warehouse</h1>
+            <h1 class="text-3xl mb-4 md:mb-0">Tableau de Bord - CHNDLM S.A - Warehouse</h1>
             <nav class="flex space-x-4">
                 <a href="jesyon.html" class="text-lg hover:text-green-600">Gestion des Ventes</a>
                 <a href="estimation.html" class="text-lg hover:text-green-600">Estimation totale des stocks</a>
@@ -121,9 +123,9 @@
 
         <section class="controls mb-8 p-6 bg-white rounded-lg shadow-md my-8">
             <div class="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
-                <button id="add-medication" class="bg-green-400 hover:bg-green-500 text-white font-bold py-2 px-4 rounded-lg shadow-md my-8 add-btn">Ajouter un médicament</button>
-                <button id="add-device" class="bg-green-400 hover:bg-green-500 text-white font-bold py-2 px-4 rounded-lg shadow-md my-8 add-btn">Ajouter un appareil médical</button>
-                <button id="add-equipment" class="bg-green-400 hover:bg-green-500 text-white font-bold py-2 px-4 rounded-lg shadow-md my-8 add-btn">Ajouter un équipement médical</button>
+                <button id="add-medication" class="bg-green-400 hover:bg-green-500 text-black py-2 px-4 rounded-lg shadow-md my-8 add-btn">Ajouter un médicament</button>
+                <button id="add-device" class="bg-green-400 hover:bg-green-500 text-black py-2 px-4 rounded-lg shadow-md my-8 add-btn">Ajouter un appareil médical</button>
+                <button id="add-equipment" class="bg-green-400 hover:bg-green-500 text-black py-2 px-4 rounded-lg shadow-md my-8 add-btn">Ajouter un équipement médical</button>
                 <input type="text" id="search-bar" placeholder="Rechercher produit par nom" class="w-full md:w-1/3 border border-gray-300 rounded-lg p-2 shadow-sm add-btn">
                 <select id="category-filter" class="w-full md:w-1/3 border border-gray-300 rounded-lg p-2 shadow-sm add-btn">
                     <option value="">Filtrer par Catégorie</option>
@@ -202,7 +204,7 @@
         </section>
 
         <section id="medication-form" class="hidden mb-8 p-6 bg-white rounded-lg shadow-md my-8">
-            <h2 id="form-title" class="text-2xl font-bold mb-4">Ajouter un Médicament</h2>
+            <h2 id="form-title" class="text-2xl mb-4">Ajouter un Médicament</h2>
             <form id="add-medication-form" class="space-y-4">
                 <input type="text" id="med-name" placeholder="Nom du Médicament" required class="w-full border border-gray-300 rounded-lg p-2">
                 <input type="number" id="med-quantity" placeholder="Quantité" min="1" required class="w-full border border-gray-300 rounded-lg p-2">
@@ -262,45 +264,18 @@
                     <option value="Vasoprotecteur">Vasoprotecteur</option>
                     <option value="autres">Autres</option>
                 </select>
-                <button type="submit" class="bg-green-400 hover:bg-green-500 text-white font-bold py-2 px-4 rounded-lg">Ajouter Médicament</button>
+                <button type="submit" class="bg-green-400 hover:bg-green-500 text-black yypy-2 px-4 rounded-lg">Ajouter Médicament</button>
             </form>
         </section>
 
         <section id="medication-details" class="hidden mb-8 p-6 bg-white rounded-lg shadow-md my-8">
-            <h2 class="text-2xl font-bold mb-4">Détails Médicament</h2>
+            <h2 class="text-2xl mb-4">Détails Médicament</h2>
             <p><strong>Nom:</strong> <span id="detail-name"></span></p>
             <p><strong>Quantité:</strong> <span id="detail-quantity"></span></p>
             <p><strong>Prix:</strong> <span id="detail-price"></span> Gdes</p>
             <p><strong>Expiration:</strong> <span id="detail-expiration"></span></p>
             <p><strong>Catégorie:</strong> <span id="detail-category"></span></p>
-            <button id="edit-button" class="bg-blue-400 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded-lg mt-4">Modifier</button>
-        </section>
-
-        <!-- Device Form -->
-        <section id="device-form" class="hidden mb-8 p-6 bg-white rounded-lg shadow-md my-8">
-            <h2 id="device-form-title" class="text-2xl font-bold mb-4">Ajouter un appareil médical</h2>
-            <form id="add-device-form" class="space-y-4">
-                <input type="text" id="device-name" placeholder="Nom de l'appareil" required class="w-full border border-gray-300 rounded-lg p-2">
-                <input type="number" id="device-quantity" placeholder="Quantité" min="1" required class="w-full border border-gray-300 rounded-lg p-2">
-                <input type="date" id="device-date" required class="w-full border border-gray-300 rounded-lg p-2">
-                <input type="text" id="device-function" placeholder="Fonction" required class="w-full border border-gray-300 rounded-lg p-2">
-                <textarea id="device-info" placeholder="Informations supplémentaires" required class="w-full border border-gray-300 rounded-lg p-2"></textarea>
-                <button type="submit" class="bg-green-400 hover:bg-green-500 text-white font-bold py-2 px-4 rounded-lg">Ajouter Appareil</button>
-            </form>
-        </section>
-
-        <!-- Equipment Form -->
-        <section id="equipment-form" class="hidden mb-8 p-6 bg-white rounded-lg shadow-md my-8">
-            <h2 id="equipment-form-title" class="text-2xl font-bold mb-4">Ajouter un équipement médical</h2>
-            <form id="add-equipment-form" class="space-y-4">
-                <input type="text" id="equip-name" placeholder="Nom de l'appareil" required class="w-full border border-gray-300 rounded-lg p-2">
-                <input type="number" id="equip-quantity" placeholder="Quantité" min="1" required class="w-full border border-gray-300 rounded-lg p-2">
-                <input type="date" id="equip-date" required class="w-full border border-gray-300 rounded-lg p-2">
-                <input type="text" id="equip-function" placeholder="Fonction" required class="w-full border border-gray-300 rounded-lg p-2">
-                <input type="text" id="equip-type" placeholder="Type d'équipement" required class="w-full border border-gray-300 rounded-lg p-2">
-                <textarea id="equip-info" placeholder="Informations supplémentaires" required class="w-full border border-gray-300 rounded-lg p-2"></textarea>
-                <button type="submit" class="bg-green-400 hover:bg-green-500 text-white font-bold py-2 px-4 rounded-lg">Ajouter Équipement</button>
-            </form>
+            <button id="edit-button" class="bg-blue-400 hover:bg-blue-500 text-black py-2 px-4 rounded-lg mt-4">Modifier</button>
         </section>
     </main>
     <script scr="js/dashscript.js"></script>
