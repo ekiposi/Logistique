@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Système de Gestion de Produits - Quantité Reçue</title>
+    <link rel="stylesheet" href="./css/output.css">
+    <link rel="stylesheet" href="css/dashstyle.css">
+    <script src="js/dashscript.js"></script>
+    <script src="js/jspdf.umd.min.js"></script>
+    <script src="js/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        @font-face {
+            font-family: 'LexendDeca';
+            src: url('fonts/LexendDecaRegular.ttf') format('truetype');
+        }
+
+        body {
+            font-family: 'LexendDeca', sans-serif;
+        }
+
+        .card {
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <header class="bg-green-200 text-black p-6 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-3xl">Gestion des Produits - CHNDLM S.A</h1>
+            <nav class="flex space-x-4">
+                <a href="dashboard.html" class="text-lg hover:text-green-600">Tableau de bord</a>
+                <a href="jesyon.html" class="text-lg hover:text-green-600">Gestion des Ventes</a>
+                <a href="estimation.html" class="text-lg hover:text-green-600">Estimation totale des stocks</a>
+                <a href="perime.html" class="text-lg hover:text-green-600">produits Périmés</a>
+                <a href="notif.html" class="text-lg hover:text-green-600">Quantités insuffisantes</a>
+                <a href="report.html" class="text-lg hover:text-green-600">Rapports de ventes</a>
+                <a href="index.html" class="text-lg text-red-600 hover:text-red-800">Déconnexion</a>
+                <a href="sent.html" class="text-lg hover:text-green-600">Rapports de transferts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 mt-8 card">
+        <!-- Formulaire pour Ajouter une Quantité -->
+        <section class="p-6 bg-white rounded-lg shadow-md card">
+            <h2 class="text-2xl font-bold mb-4">Ajouter une Quantité Reçue</h2>
+            <form id="add-quantity-form" class="space-y-4">
+                <div>
+                    <label for="product-type" class="block text-gray-700">Type de Produit <div style="color: gray">Delete when done: Anon will be able to choose the category he wants</div></label>
+                    <select id="product-type" class="w-full border border-gray-300 rounded-lg p-2">
+                        <option value="">Sélectionnez un produit</option>
+                        <option value="medicament">Médicament</option>
+                        <option value="equipement">Équipement Médical</option>
+                        <option value="appareil">Appareil Médical</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="product" class="block text-gray-700">Produit <div style="color: gray">Delete when done: Anon will be able to choose the product he wants from the previously chosen category</div></label>
+                    <input type="text" id="product" placeholder="Rechercher un produit..." class="w-full border border-gray-300 rounded-lg p-2">
+                </div>
+
+                <div>
+                    <label for="current-stock" class="block text-gray-700">Quantité Actuelle en Stock</label>
+                    <input type="number" id="current-stock" readonly class="w-full border border-gray-300 rounded-lg p-2 bg-gray-100">
+                </div>
+
+                <div>
+                    <label for="new-quantity" class="block text-gray-700">Ajouter une Quantité</label>
+                    <input type="number" id="new-quantity" placeholder="Quantité reçue" min="1" class="w-full border border-gray-300 rounded-lg p-2">
+                </div>
+
+                <div>
+                    <label for="supplier-info" class="block text-gray-700">Fournisseur</label>
+                    <input type="text" id="supplier-info" placeholder="Nom du fournisseur" class="w-full border border-gray-300 rounded-lg p-2">
+                </div>
+
+                <button type="submit" class="bg-green-400 hover:bg-green-500 text-black py-2 px-4 rounded-lg">Ajouter</button>
+            </form>
+        </section>
+
+        <!-- Générer un Rapport -->
+        <section class="p-6 bg-white rounded-lg shadow-md mt-8">
+            <h2 class="text-2xl font-bold mb-4">Générer un Rapport</h2>
+            <form id="generate-report-form" class="space-y-4">
+                <div>
+                    <label for="report-period" class="block text-gray-700">Période</label>
+                 De <input type="date" id="start-date" class="border border-gray-300 rounded-lg p-2">
+                  à  <input type="date" id="end-date" class="border border-gray-300 rounded-lg p-2">
+                </div>
+
+                <div>
+                    <label for="report-product-type" class="block text-gray-700">Type de Produit</label>
+                    <select id="report-product-type" class="w-full border border-gray-300 rounded-lg p-2">
+                        <option value="">Tous les produits</option>
+                        <option value="medicament">Médicament</option>
+                        <option value="equipement">Équipement Médical</option>
+                        <option value="appareil">Appareil Médical</option>
+                    </select>
+                </div>
+
+                <button type="button" class="bg-blue-400 hover:bg-blue-500 text-black py-2 px-4 rounded-lg" style="margin-bottom: 1rem;" onclick="generatePDFReport()">Télécharger Rapport PDF</button>
+            </form>
+
+            <table id="equipment" class="min-w-full bg-white">
+                <thead>
+                    <tr class="bg-green-300 text-black">
+                        <th class="py-3 px-6 text-center border-b border-gray-300">Nom de l'appareil</th>
+                        <th class="py-3 px-6 text-center border-b border-gray-300">Quantité</th>
+                        <th class="py-3 px-6 text-center border-b border-gray-300">Date d'Ajout</th>
+                        <th class="py-3 px-6 text-center border-b border-gray-300">Fonction</th>
+                        <th class="py-3 px-6 text-center border-b border-gray-300">Type d'équipement</th>
+                        <th class="py-3 px-6 text-center border-b border-gray-300">Quantité Faible</th>
+                        <th class="py-3 px-6 text-center border-b border-gray-300">Informations supplémentaires</th>
+                        <th class="py-3 px-6 text-center border-b border-gray-300">Quantité Initiale Avant l'Ajout</th>
+                        <th class="py-3 px-6 text-center border-b border-gray-300">Quantité Totale Reçue</th>
+                        <th class="py-3 px-6 text-center border-b border-gray-300">Nouvelle Balance Après Mise à Jour</th>
+                        <th class="py-3 px-6 text-center border-b border-gray-300">Action</th>
+                    </tr>
+                </thead>
+                <tbody class="text-black">
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <script>
+        function generatePDFReport() {
+            const doc = new jsPDF();
+            doc.text("Rapport de Stock", 10, 10);
+            doc.autoTable({
+                head: [["Produit", "Quantité Initiale", "Quantité Reçue", "Nouvelle Quantité"]],
+                body: [
+                    // Exemple de données, remplacez par des données dynamiques
+                    ["Produit A", "10", "5", "15"],
+                    ["Produit B", "20", "10", "30"]
+                ]
+            });
+            doc.save("rapport_stock.pdf");
+        }
+    </script>
+</body>
+</html>
