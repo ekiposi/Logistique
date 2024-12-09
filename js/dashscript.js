@@ -175,6 +175,20 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const renderFilteredTable = (dataToRender = medications) => {
+        // Add download button if it doesn't exist
+        if (!document.querySelector('#medication-pdf-button')) {
+            const medicationTable = document.querySelector('#medication-table');
+            if (medicationTable) {
+                medicationTable.insertAdjacentHTML('beforebegin', `
+                    <div class="flex justify-end mb-4">
+                        <button id="medication-pdf-button" onclick="downloadMedicationsPDF()" class="bg-blue-400 hover:bg-blue-500 text-white py-2 px-4 rounded-lg">
+                            Télécharger PDF Médicaments
+                        </button>
+                    </div>
+                `);
+            }
+        }
+
         elements.medicationTable.innerHTML = dataToRender.map((med, index) => {
             const isLowStock = parseInt(med.quantity) < 4;
             const expired = isDateExpired(med.expirationDate);
@@ -189,24 +203,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td>${expired ? 'Oui' : 'Non'}</td>
                     <td>${isLowStock ? 'Oui' : 'Non'}</td>
                     <td>
-                        <button onclick="showMedicationForm(${index})" class="text-black py-1 px-2 rounded-lg mr-2">Modifier</button>
-                        <button onclick="deleteMedication(${index})" class="text-black py-1 px-2 rounded-lg">Supprimer</button>
+                        <button onclick="showMedicationForm(${index})" class="bg-blue-400 hover:bg-blue-500 text-white font-bold py-1 px-2 rounded-lg mr-2">Modifier</button>
+                        <button onclick="deleteMedication(${index})" class="bg-red-400 hover:bg-red-500 text-white font-bold py-1 px-2 rounded-lg">Supprimer</button>
                     </td>
                 </tr>
             `;
         }).join('');
-
-        // Add download button if it doesn't exist
-        if (!document.querySelector('#medication-pdf-button')) {
-            const medicationSection = document.querySelector('#medication-table').closest('section');
-            medicationSection.insertAdjacentHTML('beforebegin', `
-                <div class="flex justify-end mb-4">
-                    <button id="medication-pdf-button" onclick="downloadMedicationsPDF()" class="text-white py-2 px-4 rounded-lg bg-blue-400 hover:bg-blue-500">
-                        Télécharger PDF Médicaments
-                    </button>
-                </div>
-            `);
-        }
     };
 
     const generateMedicationReport = () => {
