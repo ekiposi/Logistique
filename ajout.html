@@ -50,80 +50,8 @@
         </div>
     </header>
 <style>.card{margin-top: 2rem; margin-bottom: 2rem;}</style>
-    <main class="container mx-auto px-4 mt-8">
-        <section class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-            <!-- Card: Total Stock -->
-            <div class="bg-white p-6 rounded-lg shadow-md m-2 card">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h3 class="text-gray-500 text-sm">Stock Total Disponible</h3>
-                        <p class="text-2xl font-bold" id="total-stock-count">0</p>
-                    </div>
-                    <div class="bg-green-100 p-3 rounded-full">
-                        <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
-                        </svg>
-                    </div>
-                </div>
-                <div class="my-4">
-                    <span class="text-green-500 text-sm font-semibold">+3.5%</span>
-                    <span class="text-gray-400 text-sm"> vs mois dernier</span>
-                </div>
-            </div>
-
-            <!-- Card: Transferred Items -->
-            <div class="bg-white p-6 rounded-lg shadow-md m-2 card">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h3 class="text-gray-500 text-sm">Transferts (30 derniers jours)</h3>
-                        <p class="text-2xl font-bold" id="transfers-count">0</p>
-                    </div>
-                    <div class="bg-blue-100 p-3 rounded-full">
-                        <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
-                        </svg>
-                    </div>
-                </div>
-                <div class="mt-4">
-                    <span class="text-blue-500 text-sm font-semibold">152 articles</span>
-                    <span class="text-gray-400 text-sm"> transférés</span>
-                </div>
-            </div>
-
-            <!-- Card: Received Items -->
-            <div class="bg-white p-6 rounded-lg shadow-md m-2 card">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h3 class="text-gray-500 text-sm">Réceptions (30 derniers jours)</h3>
-                        <p class="text-2xl font-bold" id="received-count">0</p>
-                    </div>
-                    <div class="bg-purple-100 p-3 rounded-full">
-                        <svg class="w-6 h-6 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-                        </svg>
-                    </div>
-                </div>
-                <div class="mt-4">
-                    <span class="text-purple-500 text-sm font-semibold">234 articles</span>
-                    <span class="text-gray-400 text-sm"> reçus</span>
-                </div>
-            </div>
-        </section>
-
-        <!-- Charts Section -->
-        <section class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-            <!-- Stock Movement Chart -->
-            <div class="bg-white p-6 rounded-lg shadow-md card">
-                <h3 class="text-lg font-semibold mb-4">Mouvements de Stock</h3>
-                <canvas id="stockMovementChart" height="200"></canvas>
-            </div>
-
-            <!-- Category Distribution Chart -->
-            <div class="bg-white p-6 rounded-lg shadow-md card">
-                <h3 class="text-lg font-semibold mb-4">Distribution par Catégorie</h3>
-                <canvas id="categoryDistributionChart" height="200"></canvas>
-            </div>
-        </section>
+    <main class="container mx-auto px-4 mt-8 card">
+      
 
         <section class="controls mb-8 p-6 bg-white rounded-lg shadow-md my-8">
             <div class="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
