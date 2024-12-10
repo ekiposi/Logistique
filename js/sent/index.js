@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
       id: Math.floor(Math.random() * 1000000),
       type: fieldsValues.type,
       productId: fieldsValues.productName,
-      quantityAdded: Number(fieldsValues.transferQuantity),
+      quantityTransferred: Number(fieldsValues.transferQuantity),
       reason: fieldsValues.reason,
       createdAt: new Date(),
     }
