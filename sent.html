@@ -6,7 +6,6 @@
     <title>Système de Gestion de Produits - Quantité Transférée</title>
     <link rel="stylesheet" href="./css/output.css">
     <link rel="stylesheet" href="css/dashboard/dashstyle.css">
-    <script src="js/dashboard/index.js"></script>
     <script src="js/jspdf.umd.min.js"></script>
     <script src="js/jspdf.plugin.autotable.min.js"></script>
     <style>
@@ -126,6 +125,9 @@
         </section>
     </main>
 
+    <script src="js/db.js" type="module"></script>
+    <script src="js/dashboard/index.js"></script>
+    <script src="js/sent/index.js" type="module"></script>
     <script>
         function generatePDFReport() {
             const doc = new jsPDF();
