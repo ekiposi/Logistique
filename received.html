@@ -6,9 +6,10 @@
     <title>Système de Gestion de Produits - Quantité Reçue</title>
     <link rel="stylesheet" href="./css/output.css">
     <link rel="stylesheet" href="css/dashboard/dashstyle.css">
-    <script src="js/dashboard/index.js"></script>
+
     <script src="js/jspdf.umd.min.js"></script>
     <script src="js/jspdf.plugin.autotable.min.js"></script>
+
     <style>
         @font-face {
             font-family: 'LexendDeca';
@@ -127,6 +128,8 @@
         </section>
     </main>
 
+    <script src="js/dashboard/index.js"></script>
+    <script src="js/received/index.js"></script>
     <script>
         function generatePDFReport() {
             const doc = new jsPDF();
