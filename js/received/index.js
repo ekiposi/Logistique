@@ -1,5 +1,6 @@
+import { addProductStock, updateMedications } from '../db.js'
+
 document.addEventListener('DOMContentLoaded', () => {
-  const productsStock = JSON.parse(localStorage.getItem('products_stock')) || []
   const medications = JSON.parse(localStorage.getItem('medications')) || []
   
   const addProductReceived = (e) => {
@@ -9,9 +10,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const [type, productName, newQuantity, supplierName] = fields.map((fieldId) => {
       return document.querySelector(fieldId).value
     })
+
+    if (!type || !productName || !newQuantity || !supplierName) {
+      window.alert('Invalid values in some fields')
+      return
+    }
     
     // Update product quantity
-    updateProductQuantity(productName)
+    updateProductQuantity(productName, Number(newQuantity))
 
     const data = {
       id: Math.random() * 10,
@@ -22,18 +28,14 @@ document.addEventListener('DOMContentLoaded', () => {
       createdAt: new Date(),
     }
 
-    const updatedProductsStock = JSON.stringify([...productsStock, data])
-
     // Add to local storage
-    localStorage.setItem('products_stock', updatedProductsStock)
+    addProductStock(data)
     window.alert('Receive created!')
-
-    console.log('added to local storage')
   }
 
-  const updateProductQuantity = (name) => {
+  const updateProductQuantity = (name, newQuantity) => {
     // Check if product exists
-    const productExists = medications.map((med) => {
+    const updatedProductsList = medications.map((med) => {
       if (med.name === name) {
         return {
           ...med,
@@ -43,13 +45,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
       return med
     })
-    if(!productExists.length) {
+    if(!updatedProductsList.length) {
       window.alert('Product does not exist')
       return
     }
-  }
 
-  console.log('working')
+    updateMedications(updatedProductsList)
+  }
 
   const addReceivedQuantity = document.querySelector('#add-quantity-form')
   addReceivedQuantity.addEventListener('submit', addProductReceived)
