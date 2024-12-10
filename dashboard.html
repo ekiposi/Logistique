@@ -70,7 +70,7 @@
                 <canvas id="transferred-quantity" class="my-5"></canvas>
                 
                 <div class="my-4">
-                    <span class="text-green-500 text-sm font-semibold">+3.5%</span>
+                    <span id="transferred-percentual" class="text-sm font-semibold"></span>
                     <span class="text-gray-400 text-sm"> vs mois dernier</span>
                 </div>
             </div>
@@ -79,10 +79,10 @@
             <div class="w-full max-w-md bg-white p-6 rounded-lg shadow-md m-2 card">
                 <h3 class="text-gray-500 text-sm">Total Received Quantity</h3>
                 
-                <canvas id="received-quantity"></canvas>
+                <canvas id="received-quantity" class="my-5"></canvas>
                 
                 <div class="my-4">
-                    <span class="text-green-500 text-sm font-semibold">+3.5%</span>
+                    <span id="received-percentual" class="text-sm font-semibold"></span>
                     <span class="text-gray-400 text-sm"> vs mois dernier</span>
                 </div>
             </div>
@@ -167,6 +167,7 @@
         </section>
     </main>
 
+    <script src="js/db.js" type="module"></script>
     <script src="js/dashboard/index.js"></script>
     <script src="js/dashboard/graphs.js" type="module"></script>
 </body>
