@@ -4,13 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Système de Gestion de produits - CHNDLM S.A - Pharma (admin)</title>
+
     <link rel="stylesheet" href="./css/output.css">
-    <link href="fonts/LexendDecaRegular.ttf" rel="stylesheet">    <script src="js/cdn.min.js"></script>
-    <link rel="stylesheet" href="transitions.css">
- 
-    <script src="data.js"></script>
-    <link rel="stylesheet" href="css/dashstyle.css">
-    <script src="js/dashscript.js"></script>
+    <link href="fonts/LexendDecaRegular.ttf" rel="stylesheet">
+    <link rel="stylesheet" href="css/dashboard/dashstyle.css">
+
+    <script src="js/cdn.min.js"></script>
     <script src="js/jspdf.umd.min.js"></script>
     <script src="js/jspdf.plugin.autotable.min.js"></script>
     <style>
@@ -28,6 +27,10 @@
         .add-btn {
             margin-left: 1rem;
             margin-right: 1rem;
+        }
+
+        .card {
+            margin-top: 2rem; margin-bottom: 2rem;
         }
     </style>
 </head>
@@ -49,10 +52,8 @@
             </nav>
         </div>
     </header>
-<style>.card{margin-top: 2rem; margin-bottom: 2rem;}</style>
+    
     <main class="container mx-auto px-4 mt-8 card">
-      
-
         <section class="controls mb-8 p-6 bg-white rounded-lg shadow-md my-8">
             <div class="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
                 <button id="add-medication" class="bg-green-400 hover:bg-green-500 text-black py-2 px-4 rounded-lg shadow-md my-8 add-btn">Ajouter un médicament</button>
@@ -210,6 +211,7 @@
             <button id="edit-button" class="bg-blue-400 hover:bg-blue-500 text-black py-2 px-4 rounded-lg mt-4">Modifier</button>
         </section>
     </main>
-    <script scr="js/dashscript.js"></script>
+
+    <script src="js/dashboard/index.js"></script>
 </body>
 </html>

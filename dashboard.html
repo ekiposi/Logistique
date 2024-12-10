@@ -5,16 +5,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Système de Gestion de produits - CHNDLM S.A - Pharma (admin)</title>
-    <link rel="stylesheet" href="./css/output.css">
-    <link href="fonts/LexendDecaRegular.ttf" rel="stylesheet">
-    <script src="js/cdn.min.js"></script>
-    <link rel="stylesheet" href="transitions.css">
 
-    <script src="data.js"></script>
-    <link rel="stylesheet" href="css/dashstyle.css">
-    <script src="js/dashscript.js"></script>
+    <link href="fonts/LexendDecaRegular.ttf" rel="stylesheet">
+    <link rel="stylesheet" href="./css/output.css">
+    <link rel="stylesheet" href="css/tailwind.min.css">
+    <link rel="stylesheet" href="css/dashboard/dashstyle.css">
+    
+    <script src="js/cdn.min.js"></script>
+    <script src="
+    https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js
+    "></script>
     <script src="js/jspdf.umd.min.js"></script>
     <script src="js/jspdf.plugin.autotable.min.js"></script>
+    
     <style>
         @font-face {
             font-family: 'LexendDeca';
@@ -30,6 +33,11 @@
         .add-btn {
             margin-left: 1rem;
             margin-right: 1rem;
+        }
+
+        .card {
+            margin-top: 2rem;
+            margin-bottom: 2rem;
         }
     </style>
 </head>
@@ -52,14 +60,33 @@
         </nav>
     </div>
 </header>
-
-    <style>
-        .card {
-            margin-top: 2rem;
-            margin-bottom: 2rem;
-        }
-    </style>
     <main class="container mx-auto px-4 mt-8">
+        <section class="flex justify-center gap-10">
+            <!-- Graph: Transferred quantity -->
+            <div class="w-full max-w-md bg-white p-6 rounded-lg shadow-md m-2 card">
+                <h3 class="text-gray-500 text-sm">Total Transferred Quantity</h3>
+                
+                <canvas id="transferred-quantity" class="my-5"></canvas>
+                
+                <div class="my-4">
+                    <span class="text-green-500 text-sm font-semibold">+3.5%</span>
+                    <span class="text-gray-400 text-sm"> vs mois dernier</span>
+                </div>
+            </div>
+
+            <!-- Graph: Received quantity -->
+            <div class="w-full max-w-md bg-white p-6 rounded-lg shadow-md m-2 card">
+                <h3 class="text-gray-500 text-sm">Total Received Quantity</h3>
+                
+                <canvas id="received-quantity"></canvas>
+                
+                <div class="my-4">
+                    <span class="text-green-500 text-sm font-semibold">+3.5%</span>
+                    <span class="text-gray-400 text-sm"> vs mois dernier</span>
+                </div>
+            </div>
+        </section>
+
         <section class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
             <!-- Card: Total Stock -->
             <div class="bg-white p-6 rounded-lg shadow-md m-2 card">
@@ -138,6 +165,9 @@
             </div>
         </section>
     </main>
+
+    <script src="js/dashboard/index.js"></script>
+    <script src="js/dashboard/graphs.js" type="module"></script>
 </body>
 
 </html>
