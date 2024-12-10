@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
             formTitle.innerText = "Modifier Médicament";
             const medication = medications[index];
             
-            ['med-name', 'med-quantity', 'med-price', 'med-expiration', 'med-category']
+            ['med-name', 'med-quantity', 'med-price', 'med-expirationDate', 'med-category']
                 .forEach(id => {
                     const field = document.getElementById(id);
                     field.value = medication[field.name.replace('med-', '')];
