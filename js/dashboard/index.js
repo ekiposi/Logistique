@@ -92,10 +92,10 @@ document.addEventListener('DOMContentLoaded', () => {
             formTitle.innerText = "Modifier produit";
             const medication = medications[index];
             
-            ['med-name', 'med-quantity', 'med-price', 'med-expiration', 'med-category']
+            ['med-name', 'med-quantity', 'med-price', 'med-expirationDate', 'med-category']
                 .forEach(id => {
                     const field = document.getElementById(id);
-                    field.value = medication[field.name.replace('med-', '')];
+                    field.value = medication[id.split('-')[1]];
                 });
             
             editingIndex = index;
@@ -253,7 +253,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 name: document.getElementById("med-name").value,
                 quantity: document.getElementById("med-quantity").value,
                 price: document.getElementById("med-price").value,
-                expirationDate: document.getElementById("med-expiration").value,
+                expirationDate: document.getElementById("med-expirationDate").value,
                 category: document.getElementById("med-category").value
             };
 
