@@ -17,7 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     // Update product quantity
-    updateProductQuantity(productName, Number(newQuantity))
+    const isConcluded = updateProductQuantity(productName, Number(newQuantity))
+    if (!isConcluded) return
 
     const data = {
       id: Math.random() * 10,
@@ -47,10 +48,11 @@ document.addEventListener('DOMContentLoaded', () => {
     })
     if(!updatedProductsList.length) {
       window.alert('Product does not exist')
-      return
+      return false
     }
 
     updateMedications(updatedProductsList)
+    return true
   }
 
   const addReceivedQuantity = document.querySelector('#add-quantity-form')
