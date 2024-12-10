@@ -58,14 +58,24 @@
 
                 <div>
                     <label for="product" class="block text-gray-700">Produit</label>
-                    <input type="text" id="product" placeholder="Rechercher un produit..." class="w-full border border-gray-300 rounded-lg p-2">
+                    <div class="relative">
+                        <input type="text" id="product" placeholder="Rechercher un produit..." class="w-full border border-gray-300 rounded-lg p-2" list="product-list">
+                        <datalist id="product-list">
+                            <option value="Produit 1">
+                            <option value="Produit 2">
+                            <option value="Produit 3">
+                        </datalist>
+                    </div>
                 </div>
 
                 <div>
                     <label for="current-stock" class="block text-gray-700">Quantité Actuelle en Stock</label>
                     <input type="number" id="current-stock" readonly class="w-full border border-gray-300 rounded-lg p-2 bg-gray-100">
                 </div>
-
+                <div>
+                    <label for="current-stock" class="block text-gray-700">Date de transfert</label>
+                    <input type="date" id="" required class="w-full border border-gray-300 rounded-lg p-2">
+                </div>
                 <div>
                     <label for="transfer-quantity" class="block text-gray-700">Quantité à Transférer</label>
                     <input type="number" id="transfer-quantity" placeholder="Quantité à transférer" min="1" class="w-full border border-gray-300 rounded-lg p-2">
