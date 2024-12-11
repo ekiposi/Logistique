@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const { isBefore } = window.dateFns
+
     let medications = [];
     let devices = [];
     let equipment = [];
@@ -248,6 +250,16 @@ document.addEventListener('DOMContentLoaded', () => {
         
         elements.medicationForm.addEventListener("submit", (event) => {
             event.preventDefault();
+
+            console.log('its ')
+
+            const expirationDate = document.getElementById("med-expirationDate").value
+            const isBeforeToday = isBefore(new Date(expirationDate), new Date())
+
+            if (isBeforeToday) {
+                window.alert("Medicine is expired, can't update the product")
+                return
+            }
             
             const medication = {
                 name: document.getElementById("med-name").value,
