@@ -1,3 +1,10 @@
+// UTIL
+
+export const getDataFromStorage = (table) => {
+  const data = JSON.parse(localStorage.getItem(table)) || []
+  return data
+}
+
 // RECEIVED PRODUCTS
 
 export const getProductsStock = () => {
@@ -36,4 +43,32 @@ export const getMedications = () => {
 export const updateMedications = (data) => {
   const updatedData = JSON.stringify(data)
   localStorage.setItem('medications', updatedData)
+}
+
+// EQUIPMENTS
+
+export const getEquipments = () => {
+  const equipments = JSON.parse(localStorage.getItem('equipments')) || []
+  return equipments
+}
+
+export const addEquipment = (data) => {
+  const previousData = getEquipments()
+
+  const updatedData = JSON.stringify([...previousData, data])
+  localStorage.setItem('equipments', updatedData)
+}
+
+// DEVICES
+
+export const getDevices = () => {
+  const devices = JSON.parse(localStorage.getItem('devices')) || []
+  return devices
+}
+
+export const addDevice = (data) => {
+  const previousData = getDevices()
+
+  const updatedData = JSON.stringify([...previousData, data])
+  localStorage.setItem('devices', updatedData)
 }
