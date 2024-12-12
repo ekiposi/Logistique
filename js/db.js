@@ -37,3 +37,12 @@ export const updateMedications = (data) => {
   const updatedData = JSON.stringify(data)
   localStorage.setItem('medications', updatedData)
 }
+
+
+// UPDATE PROFILE
+
+export const updateProfile = (data) => {
+  const updatedData = JSON.stringify(data)
+  localStorage.setItem('profile', updatedData)
+
+}

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Système de Gestion de Produits - Quantité Reçue</title>
+    <link rel="stylesheet" href="./css/output.css">
+    <link rel="stylesheet" href="css/dashboard/dashstyle.css">
+    <link rel="stylesheet" href="./css/output.css">
+    
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=mail,smartphone,supervised_user_circle,vpn_key" />
+    <script src="js/jspdf.umd.min.js"></script>
+    <script src="js/jspdf.plugin.autotable.min.js"></script>
+
+    <style>
+        @font-face {
+            font-family: 'LexendDeca';
+            src: url('fonts/LexendDecaRegular.ttf') format('truetype');
+        }
+
+        body {
+            font-family: 'LexendDeca', sans-serif;
+        }
+
+        .card {
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
+        #icons {
+            align-items: center;
+            font-size: 35px;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100">
+    <header class="bg-green-200 text-black p-6 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-3xl">Gestion des Produits - CHNDLM S.A</h1>
+            <nav class="flex space-x-4">
+                <a href="dashboard.html" class="text-lg hover:text-green-600">Tableau de bord</a>
+                <a href="ajout.html" class="text-lg hover:text-green-100">Ajout de produits</a>
+                <a href="jesyon.html" class="text-lg hover:text-green-600">Gestion des Ventes</a>
+                <a href="estimation.html" class="text-lg hover:text-green-600">Estimation totale des stocks</a>
+                <a href="perime.html" class="text-lg hover:text-green-600">Produits Périmés</a>
+                <a href="notif.html" class="text-lg hover:text-green-600">Quantités insuffisantes</a>
+                <a href="sent.html" class="text-lg hover:text-green-600">Rapports de transferts</a>
+                <a href="report.html" class="text-lg hover:text-green-600">Rapports de ventes</a>
+                <a href="perfil.html" class="text-lg hover:text-green-600">Profil</a>
+                <a href="index.html" class="text-lg text-red-600 hover:text-red-800">Déconnexion</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 mt-8 card">
+        <section class="p-6 bg-white rounded-lg shadow-md card">
+            <h2 class="text-2xl font-bold mb-4">Modifier le profil</h2>
+            <form id="profil-form" class="space-y-4">
+                <div>
+                    <label for="profil-name" class="block text-gray-700">Nom</label>
+                    <div class="flex items-center">
+                        <span id="icons" class="material-symbols-outlined">supervised_user_circle</span>
+                        <input id="profil-name" type="text" placeholder="meow" class="w-full border border-gray-300 rounded-lg p-2"/>
+                    </div>
+                </div>
+                <div>
+                    <label for="profil-email" class="block text-gray-700 mr-12">E-mail</label>
+                    <div class="flex items-center">
+                        <span id="icons" class="material-symbols-outlined">mail</span>
+                        <input id="profil-email" type="text" placeholder="meow@meow" class="w-full border rounded-lg p-2"/>
+                    </div>
+                </div>
+                <div>
+                    <label for="profil-phone" class="block text-gray-700">Numéro de téléphone</label>
+                    <div class="flex items-center">
+                        <span id="icons" class="material-symbols-outlined">smartphone</span>
+                    <input id="profil-phone" type="text" placeholder="999999999" class="w-full border border-gray-300 rounded-lg p-2"/>
+                    </div>
+                </div>
+
+                <button type="submit" class="bg-green-400 hover:bg-green-500 text-black py-2 px-4 rounded-lg">Mettre à jour</button>
+            </form>
+        </section>
+
+        <section class="p-6 bg-white rounded-lg shadow-md card">
+            <h2 class="text-2xl font-bold mb-4">Mettre à jour le mot de passe</h2>
+            <form id="profil-form" class="space-y-4">
+                <div>
+                    <label for="profil-name" class="block text-gray-700">Mot de passe</label>
+                    <div class="flex items-center">
+                        <span id="icons" class="material-symbols-outlined">vpn_key</span>
+                        <input type="text" placeholder="entrez votre mot de passe ici" class="w-full border border-gray-300 rounded-lg p-2"/>
+                    </div>
+                </div>
+                <div>
+                    <label for="profil-email" class="block text-gray-700">Confirmer le nouveau mot de passe</label>
+                    <div class="flex items-center">
+                        <span id="icons" class="material-symbols-outlined">vpn_key</span>
+                        <input type="text" placeholder="entrez votre mot de passe ici" class="w-full border border-gray-300 rounded-lg p-2"/>
+                    </div>
+                </div>
+
+                <button type="submit" class="bg-green-400 hover:bg-green-500 text-black py-2 px-4 rounded-lg">Mettre à jour</button>
+            </form>
+        </section>
+
+    </main>
+
+</body>
+</html>
