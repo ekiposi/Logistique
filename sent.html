@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="css/dashboard/dashstyle.css">
     <script src="js/jspdf.umd.min.js"></script>
     <script src="js/jspdf.plugin.autotable.min.js"></script>
+    <script src="js/pdf/formatPdf.js"></script>
     <style>
         @font-face {
             font-family: 'LexendDeca';
@@ -35,8 +36,9 @@
                 <a href="perime.html" class="text-lg hover:text-green-600">produits Périmés</a>
                 <a href="notif.html" class="text-lg hover:text-green-600">Quantités insuffisantes</a>
                 <a href="report.html" class="text-lg hover:text-green-600">Rapports de ventes</a>
-                <a href="index.html" class="text-lg text-red-600 hover:text-red-800">Déconnexion</a>
                 <a href="received.html" class="text-lg hover:text-green-600">Rapports de réceptions</a>
+                <a href="perfil.html" class="text-lg hover:text-green-600">Profil</a>
+                <a href="index.html" class="text-lg text-red-600 hover:text-red-800">Déconnexion</a>
             </nav>
         </div>
     </header>
@@ -140,17 +142,20 @@
     <script src="js/sent/index.js" type="module"></script>
     <script>
         function generatePDFReport() {
-            const doc = new jsPDF();
-            doc.text("Rapport de Transfert", 10, 10);
-            doc.autoTable({
+            // const { jsPDF } = window.jspdf;
+            // const doc = new jsPDF()
+            // doc.text("Rapport de Transfert", 10, 10);
+            autoTable = {
                 head: [["Produit", "Quantité Initiale", "Quantité Transférée", "Nouvelle Quantité"]],
                 body: [
                     // Exemple de données, remplacez par des données dynamiques
                     ["Produit A", "50", "5", "45"],
                     ["Produit B", "30", "10", "20"]
                 ]
-            });
-            doc.save("rapport_transfert.pdf");
+            };
+            // doc.save("rapport_transfert.pdf");
+
+            formatPdf('teste', autoTable, 'rapport_transfert.pdf')
         }
     </script>
 </body>
