@@ -10,6 +10,7 @@
 
     <script src="js/jspdf.umd.min.js"></script>
     <script src="js/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/date-fns@3.6.0/cdn.min.js"></script>
 
     <style>
         @font-face {
@@ -56,9 +57,9 @@
                             Delete when done: Anon will be able to choose the category he wants</div></label>
                     <select id="product-type" class="w-full border border-gray-300 rounded-lg p-2">
                         <option value="">Sélectionnez un produit</option>
-                        <option value="medicament">Médicament</option>
-                        <option value="equipement">Équipement Médical</option>
-                        <option value="appareil">Appareil Médical</option>
+                        <option value="medications">Médicament</option>
+                        <option value="equipments">Équipement Médical</option>
+                        <option value="devices">Appareil Médical</option>
                     </select>
                 </div>
 
@@ -66,11 +67,7 @@
                     <label for="product" class="block text-gray-700">Produit</label>
                     <div class="relative">
                         <input type="text" id="product" placeholder="Rechercher un produit..." class="w-full border border-gray-300 rounded-lg p-2" list="product-list">
-                        <datalist id="product-list">
-                            <option value="Produit 1">
-                            <option value="Produit 2">
-                            <option value="Produit 3">
-                        </datalist>
+                        <datalist id="product-list"></datalist>
                     </div>
                 </div>
 
