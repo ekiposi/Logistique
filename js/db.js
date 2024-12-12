@@ -71,6 +71,7 @@ export const addDevice = (data) => {
 
   const updatedData = JSON.stringify([...previousData, data])
   localStorage.setItem('devices', updatedData)
+}
 
 // UPDATE PROFILE
 
