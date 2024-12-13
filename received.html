@@ -7,6 +7,7 @@
     <title>Système de Gestion de Produits - Quantité Reçue</title>
     <link rel="stylesheet" href="./css/output.css">
     <link rel="stylesheet" href="css/dashboard/dashstyle.css">
+    <link rel="stylesheet" href="css/tailwind.min.css">
 
     <script src="js/jspdf.umd.min.js"></script>
     <script src="js/jspdf.plugin.autotable.min.js"></script>
@@ -57,8 +58,8 @@
                     <label for="product-type" class="block text-gray-700">Type de Produit <div style="color: gray">
                             Delete when done: Anon will be able to choose the category he wants</div></label>
                     <select id="product-type" class="w-full border border-gray-300 rounded-lg p-2">
-                        <option value="">Sélectionnez un produit</option>
-                        <option value="medications">Médicament</option>
+                        <option value="">Sélectionnez un type de produit</option>
+                        <option selected value="medications">Médicament</option>
                         <option value="equipments">Équipement Médical</option>
                         <option value="devices">Appareil Médical</option>
                     </select>
@@ -66,10 +67,10 @@
 
                 <div>
                     <label for="product" class="block text-gray-700">Produit</label>
-                    <div class="relative">
-                        <input type="text" id="product" placeholder="Rechercher un produit..." class="w-full border border-gray-300 rounded-lg p-2" list="product-list">
-                        <datalist id="product-list"></datalist>
-                    </div>
+                    
+                    <select type="text" id="product" placeholder="Rechercher un produit..." class="w-full border border-gray-300 rounded-lg p-2">
+                        <option value="">Sélectionnez un produit</option>
+                    </select>
                 </div>
 
                 <div>
@@ -77,9 +78,24 @@
                     <input type="number" id="current-stock" readonly
                         class="w-full border border-gray-300 rounded-lg p-2 bg-gray-100">
                 </div>
+
                 <div>
-                    <label for="current-stock" class="block text-gray-700">Date de réception</label>
-                    <input type="date" id="" required class="w-full border border-gray-300 rounded-lg p-2">
+                    <label for="fonction" class="block text-gray-700">Fonction</label>
+                    <div class="relative">
+                        <input type="text" id="fonction" class="w-full border border-gray-300 rounded-lg p-2">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="extra-information" class="block text-gray-700">Informations supplementaires</label>
+                    <div class="relative">
+                        <input type="text" id="extra-information" class="w-full border border-gray-300 rounded-lg p-2">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="reception-date" class="block text-gray-700">Date de réception</label>
+                    <input type="date" id="reception-date" required class="w-full border border-gray-300 rounded-lg p-2">
                 </div>
                 <div>
                     <label for="new-quantity" class="block text-gray-700">Ajouter une Quantité</label>
@@ -112,17 +128,19 @@
                     <label for="report-product-type" class="block text-gray-700">Type de Produit</label>
                     <select id="report-product-type" class="w-full border border-gray-300 rounded-lg p-2">
                         <option value="">Tous les produits</option>
-                        <option value="medicament">Médicament</option>
-                        <option value="equipement">Équipement Médical</option>
-                        <option value="appareil">Appareil Médical</option>
+                        <option selected value="medications">Médicament</option>
+                        <option value="equipments">Équipement Médical</option>
+                        <option value="devices">Appareil Médical</option>
                     </select>
                 </div>
+
+                <button type="button" id="filter-button" class="bg-green-400 hover:bg-green-500 text-white font-bold py-2 px-4 rounded-lg shadow-md">Appliquer les filtres</button>
 
                 <button type="button" class="bg-blue-400 hover:bg-blue-500 text-black py-2 px-4 rounded-lg"
                     style="margin-bottom: 1rem;" onclick="generatePDFReport()">Télécharger Rapport PDF</button>
             </form>
 
-            <table id="equipment" class="min-w-full bg-white">
+            <table id="products-received-table" class="min-w-full bg-white">
                 <thead>
                     <tr class="bg-green-300 text-black">
                         <th class="py-3 px-6 text-center border-b border-gray-300">Nom de l'appareil</th>
@@ -134,8 +152,7 @@
                         <th class="py-3 px-6 text-center border-b border-gray-300">Informations supplémentaires</th>
                         <th class="py-3 px-6 text-center border-b border-gray-300">Quantité Initiale Avant l'Ajout</th>
                         <th class="py-3 px-6 text-center border-b border-gray-300">Quantité Totale Reçue</th>
-                        <th class="py-3 px-6 text-center border-b border-gray-300">Nouvelle Balance Après Mise à Jour
-                        </th>
+                        <th class="py-3 px-6 text-center border-b border-gray-300">Nouvelle Balance Après Mise à Jour</th>
                         <th class="py-3 px-6 text-center border-b border-gray-300">Action</th>
                     </tr>
                 </thead>
@@ -146,8 +163,10 @@
     </main>
 
     <script src="js/db.js" type="module"></script>
+    <script src="js/utils.js" type="module"></script>
     <script src="js/dashboard/index.js"></script>
     <script src="js/received/index.js" type="module"></script>
+    <script src="js/received/table.js" type="module"></script>
     <script>
         function generatePDFReport() {
             const doc = new jsPDF();
