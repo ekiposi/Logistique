@@ -1,9 +1,12 @@
+import { addEquipment, getMedications, getDevices, getEquipments, updateEquipments } from '../db.js'
+import { formatDate } from '../utils.js'
+
 document.addEventListener('DOMContentLoaded', () => {
     const { isBefore } = window.dateFns
 
-    let medications = [];
-    let devices = [];
-    let equipment = [];
+    let medications = getMedications()
+    let devices = getDevices()
+    let equipments = getEquipments()
     let editingIndex = -1;
 
     const elements = {
@@ -27,6 +30,8 @@ document.addEventListener('DOMContentLoaded', () => {
         equipmentFormContainer: document.getElementById("equipment-form")
     };
 
+    console.log(elements)
+
     const formatCurrency = (value) => {
         return new Intl.NumberFormat('fr-FR', {
             style: 'currency',
@@ -45,18 +50,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const loadData = () => {
-        // Load medications
-        const storedMedications = localStorage.getItem('medications');
-        medications = storedMedications ? JSON.parse(storedMedications) : [];
-
-        // Load devices
-        const storedDevices = localStorage.getItem('devices');
-        devices = storedDevices ? JSON.parse(storedDevices) : [];
-
-        // Load equipment
-        const storedEquipment = localStorage.getItem('equipment');
-        equipment = storedEquipment ? JSON.parse(storedEquipment) : [];
-
         // Render all tables
         renderFilteredTable();
         renderDeviceTable();
@@ -113,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
             index !== editingIndex
         )) {
             alert("Ce produit existe déjà.");
-            return;
+            return
         }
 
         const preparedMedication = {
@@ -276,17 +269,20 @@ document.addEventListener('DOMContentLoaded', () => {
             addMedication(medication);
         });
 
-        [
+        const filters = [
             elements.searchBar,
             elements.categoryFilter,
             elements.expiredFilter,
             elements.lowStockFilter
-        ].forEach(element => {
+        ]
+        filters.forEach(element => {
             element.addEventListener(
                 element.type === 'checkbox' ? 'change' : 'input', 
                 renderFilteredTable
             );
         });
+
+        
 
         elements.addDeviceBtn.addEventListener("click", () => showDeviceForm());
         elements.deviceForm.addEventListener("submit", handleDeviceSubmit);
@@ -314,7 +310,7 @@ document.addEventListener('DOMContentLoaded', () => {
             renderDeviceTable(filteredDevices);
 
             // Filter and render equipment
-            const filteredEquipment = equipment.filter(equip => 
+            const filteredEquipment = equipments.filter(equip => 
                 equip.name.toLowerCase().includes(searchTerm) ||
                 equip.function.toLowerCase().includes(searchTerm) ||
                 equip.type.toLowerCase().includes(searchTerm) ||
@@ -326,6 +322,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const initializeApp = () => {
         loadData();
+
         setupEventListeners();
         
         // Add download buttons for all tables
@@ -461,7 +458,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    window.showEquipmentForm = (index = -1) => {
+    const showEquipmentForm = (index = -1) => {
         // Toggle visibility
         elements.equipmentFormContainer.classList.toggle("hidden");
         
@@ -481,7 +478,7 @@ document.addEventListener('DOMContentLoaded', () => {
             editingIndex = -1;
         } else {
             formTitle.innerText = "Modifier un équipement médical";
-            const equip = equipment[index];
+            const equip = equipments[index];
             document.getElementById("equip-name").value = equip.name || '';
             document.getElementById("equip-quantity").value = equip.quantity || '';
             document.getElementById("equip-date").value = equip.dateAdded || new Date().toISOString().split('T')[0];
@@ -528,34 +525,28 @@ document.addEventListener('DOMContentLoaded', () => {
     const handleEquipmentSubmit = (event) => {
         event.preventDefault();
         
-        const equip = {
+        const equipment = {
             name: document.getElementById("equip-name").value,
             quantity: document.getElementById("equip-quantity").value,
-            dateAdded: document.getElementById("equip-date").value,
-            function: document.getElementById("equip-function").value,
+            createdAt: document.getElementById("equip-date").value,
+            price: document.getElementById("equip-price").value,
+            role: document.getElementById("equip-function").value,
             type: document.getElementById("equip-type").value,
             additionalInfo: document.getElementById("equip-info").value,
-            isLowStock: parseInt(document.getElementById("equip-quantity").value) < 4
         };
 
         // Check if any required field is empty
-        const requiredFields = ["name", "quantity", "dateAdded", "function", "type"];
-        const missingFields = requiredFields.filter(field => !equip[field]);
+        const requiredFields = ["name", "quantity", "createdAt", "role", "type", "price"];
+        const missingFields = requiredFields.filter(field => !equipment[field]);
         
         if (missingFields.length > 0) {
             alert("Tous les champs sont obligatoires !");
             return;
         }
 
-        if (editingIndex === -1) {
-            equipment.push(equip);
-        } else {
-            equipment[editingIndex] = equip;
-            editingIndex = -1;
-        }
-
-        localStorage.setItem('equipment', JSON.stringify(equipment));
+        addEquipment(equipment)
         renderEquipmentTable();
+        
         elements.equipmentFormContainer.classList.add("hidden");
     };
 
@@ -591,14 +582,16 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const renderEquipmentTable = () => {
-        elements.equipmentTable.innerHTML = equipment.map((equip, index) => `
+        equipments = getEquipments()
+
+        elements.equipmentTable.innerHTML = equipments.map((equip, index) => `
             <tr>
                 <td>${equip.name}</td>
                 <td>${equip.quantity}</td>
-                <td>${equip.dateAdded}</td>
-                <td>${equip.function}</td>
+                <td>${formatDate(equip.createdAt)}</td>
+                <td>${equip.role}</td>
                 <td>${equip.type}</td>
-                <td>${equip.isLowStock ? 'Oui' : 'Non'}</td>
+                <td>${equip.quantity < 4 ? 'Oui' : 'Non'}</td>
                 <td>${equip.additionalInfo}</td>
                 <td>
                     <button onclick="showEquipmentForm(${index})" class="text-black py-1 px-2 rounded-lg mr-2">Modifier</button>
@@ -622,20 +615,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Add these to your window object
-    window.showDeviceForm = showDeviceForm;
-    window.showEquipmentForm = showEquipmentForm;
-    window.deleteDevice = (index) => {
+    const deleteDevice = (index) => {
         if (confirm("Êtes-vous sûr de vouloir supprimer cet appareil ?")) {
             devices.splice(index, 1);
             localStorage.setItem('devices', JSON.stringify(devices));
             renderDeviceTable();
         }
     };
-    window.deleteEquipment = (index) => {
+    const deleteEquipment = (index) => {
         if (confirm("Êtes-vous sûr de vouloir supprimer cet équipement ?")) {
-            equipment.splice(index, 1);
-            localStorage.setItem('equipment', JSON.stringify(equipment));
+            equipments.splice(index, 1);
+            updateEquipments(equipments)
             renderEquipmentTable();
         }
     };
@@ -729,12 +719,9 @@ document.addEventListener('DOMContentLoaded', () => {
     window.showMedicationForm = showMedicationForm;
     window.deleteMedication = deleteMedication;
     window.showDeviceForm = showDeviceForm;
-    window.showEquipmentForm = showEquipmentForm;
     window.deleteDevice = deleteDevice;
     window.deleteEquipment = deleteEquipment;
     
     // Initialize
-    loadData();
-    setupEventListeners();
     initializeApp();
 });
