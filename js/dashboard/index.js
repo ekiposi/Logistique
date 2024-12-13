@@ -251,8 +251,6 @@ document.addEventListener('DOMContentLoaded', () => {
         elements.medicationForm.addEventListener("submit", (event) => {
             event.preventDefault();
 
-            console.log('its ')
-
             const expirationDate = document.getElementById("med-expirationDate").value
             const isBeforeToday = isBefore(new Date(expirationDate), new Date())
 
