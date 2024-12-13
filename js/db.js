@@ -59,6 +59,11 @@ export const addEquipment = (data) => {
   localStorage.setItem('equipments', updatedData)
 }
 
+export const updateEquipments = (data) => {
+  const updatedData = JSON.stringify(data)
+  localStorage.setItem('equipments', updatedData)
+}
+
 // DEVICES
 
 export const getDevices = () => {
