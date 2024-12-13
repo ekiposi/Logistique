@@ -9,6 +9,7 @@
     <link href="fonts/LexendDecaRegular.ttf" rel="stylesheet">    <script src="js/jspdf.umd.min.js"></script>
     <script src="js/jspdf.plugin.autotable.min.js" defer></script>
     <script src="js/dashscript.js" defer></script>
+    <script src="../js/pdf/formatPdf.js"></script>
     <link rel="stylesheet" href="css/dashstyle.css">
     <style>
         @font-face {
@@ -114,21 +115,8 @@
         document.getElementById('download-pdf').addEventListener('click', () => {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
-            doc.setFontSize(16);
-            doc.text('CENTRE HOSPITALIER NOTRE DAME DE LA MERCI S.A - Pharma', 105, 20, { align: 'center' });
-            doc.setFontSize(10);
-            doc.text('Adresse : 5, Rue Rivière en face du Rectorat de l\'UEH', 105, 30, { align: 'center' });
-            doc.text('Email: pharmachndlm@gmail.com', 105, 35, { align: 'center' });
-            doc.text('Téléphone: +509 2910-3131', 105, 40, { align: 'center' });
-
-            doc.setLineWidth(0.5);
-            doc.line(10, 45, 200, 45);
-
-            doc.setFontSize(12);
-            doc.text('Médicaments Périmés', 105, 55, { align: 'center' });
-
-            doc.setFontSize(10);
-            doc.text(`Date: ${new Date().toLocaleString()}`, 105, 65, { align: 'center' });
+            
+            getHeaderPdf(doc, 'Médicaments Périmé')
             
             const headers = ["Nom", "Quantité", "Prix", "Date d'Expiration", "Catégorie"];
             const colWidths = [40, 40, 40, 36, 36];
@@ -164,6 +152,7 @@
             doc.setTextColor(0, 0, 0);
             doc.text(`Total: ${totalPrice.toFixed(2)}`, 14, y + 15)
 
+            getFootPdf(doc)
             doc.save('medicaments_perimes_CHNDLM.pdf');
         });
     </script>
