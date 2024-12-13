@@ -105,7 +105,7 @@
                 <div>
                     <label for="report-product-type" class="block text-gray-700">Type de Produit</label>
                     <select id="report-product-type" class="w-full border border-gray-300 rounded-lg p-2">
-                        <option value="">Tous les produits</option>
+                        <option value="all-product">Tous les produits</option>
                         <option value="medicament">Médicament</option>
                         <option value="equipement">Équipement Médical</option>
                         <option value="appareil">Appareil Médical</option>
@@ -142,20 +142,30 @@
     <script src="js/sent/index.js" type="module"></script>
     <script>
         function generatePDFReport() {
-            // const { jsPDF } = window.jspdf;
-            // const doc = new jsPDF()
-            // doc.text("Rapport de Transfert", 10, 10);
+
+            const dataStart = document.getElementById('start-date').value
+            const dataEnd = document.getElementById('end-date').value
+            const productType = document.getElementById('product-type').value
+            
+            const selectElement = document.getElementById('report-product-type');
+            
+            selectElement.addEventListener('change', function () {
+            const selectedValue = selectElement.value;
+             document.getElementById('selected-value').textContent = selectedValue || 'Tous les produits';
+            });
+            description = `- date de début: ${dataStart} | date de fin: ${dataEnd} | type de produit: ${productType}`
+
             autoTable = {
                 head: [["Produit", "Quantité Initiale", "Quantité Transférée", "Nouvelle Quantité"]],
                 body: [
                     // Exemple de données, remplacez par des données dynamiques
                     ["Produit A", "50", "5", "45"],
                     ["Produit B", "30", "10", "20"]
-                ]
-            };
-            // doc.save("rapport_transfert.pdf");
+                ],
+                margin: { top: 100 }
 
-            formatPdf('teste', autoTable, 'rapport_transfert.pdf')
+            };
+            formatPdf('Estimation Totale des Stocks', description, autoTable, 'rapport_transfert.pdf')
         }
     </script>
 </body>
