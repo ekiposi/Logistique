@@ -6,13 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rapport de Ventes - CHNDLM S.A - Pharma (Admin)</title>
     <link rel="stylesheet" href="css/output.css">
-    <link href="fonts/LexendDecaRegular.ttf" rel="stylesheet">    <script src="js/jspdf.umd.min.js" defer></script>
+    <link href="fonts/LexendDecaRegular.ttf" rel="stylesheet">    
+    <link rel="stylesheet" href="css/dashboard/dashstyle.css">
+    
+    <script src="js/jspdf.umd.min.js" defer></script>
     <script src="js/jspdf.plugin.autotable.min.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/date-fns@3.6.0/cdn.min.js"></script>
-    <link rel="stylesheet" href="css/dashboard/dashstyle.css">
-    <script src="js/jesyonscript.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
-<script src="js/excel.js" defer></script>
+
     <style>
         @font-face {
             font-family: 'LexendDeca';
@@ -91,188 +92,187 @@
             </table>
         </section>
     </main>
-</body>
+    <script src="js/excel.js" defer></script>
+    <script src="js/jesyonscript.js" defer></script>
 
-</html>
-
-<script>
-   document.addEventListener('DOMContentLoaded', () => {
-    // Improved localStorage management
-    const StorageManager = {
-        // Get sales history with error handling
-        getSalesHistory() {
-            try {
-                const sales = JSON.parse(localStorage.getItem('salesHistory')) || [];
-                return Array.isArray(sales) ? sales : [];
-            } catch (error) {
-                console.error('Error retrieving sales history:', error);
-                return [];
-            }
-        },
-
-        // Save sales history with error handling
-        saveSalesHistory(salesHistory) {
-            try {
-                localStorage.setItem('salesHistory', JSON.stringify(salesHistory));
-            } catch (error) {
-                console.error('Error saving sales history:', error);
-                
-                // Check for common localStorage errors
-                if (error instanceof DOMException) {
-                    if (error.name === 'QuotaExceededError') {
-                        alert('Storage limit exceeded. Please clear some old data.');
-                    }
-                }
-            }
-        },
-
-        clearSalesHistory() {
-            try {
-                localStorage.removeItem('salesHistory');
-            } catch (error) {
-                console.error('Error clearing sales history:', error);
-            }
-        }
-    };
-
-    // Get sales history
-    const salesHistory = StorageManager.getSalesHistory();
-
-    const salesTableBody = document.querySelector('#sales-report-table tbody');
-    const startDateInput = document.getElementById('start-date');
-    const endDateInput = document.getElementById('end-date');
-    const salesFilter = document.getElementById('sales-filter');
-    const totalAmountElement = document.getElementById('total-amount');
-
-    const renderTable = (data) => {
-        salesTableBody.innerHTML = '';
-        let totalSales = 0;
-
-        if (data.length === 0) {
-            salesTableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Aucune donnée disponible</td></tr>';
-            totalAmountElement.textContent = '0';
-            return;
-        }
-
-        data.forEach((sale) => {
-            const totalSalePrice = sale.quantity * sale.price;
-            totalSales += totalSalePrice;
-
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${sale.date}</td>
-                <td>${sale.clientName}</td>
-                <td>${sale.medication}</td>
-                <td>${sale.quantity}</td>
-                <td>${sale.price}</td>
-                <td>${totalSalePrice.toFixed(2)}</td>
-            `;
-            salesTableBody.appendChild(row);
-        });
-
-        // Add total period last line
-        const totalRow = document.createElement('tr');
-        const totalPrice = salesHistory.reduce((acc, sale) => (sale.price * sale.quantity) + acc, 0);
-        totalRow.innerHTML = `
-        <tr>
-            <td colspan='5'><strong>Total</strong></td>
-            <td>${totalPrice.toFixed(2)}</td>
-        </tr>
-        `;
-        salesTableBody.appendChild(totalRow);
-
-        totalAmountElement.textContent = totalSales.toFixed(2);
-    };
-
-    const filterSales = () => {
-        const { isAfter, isBefore, isSameDay, endOfDay, startOfDay, addMinutes } = window.dateFns
-
-        const startDate = startDateInput.value ? startOfDay(startDateInput.value) : null;
-        const endDate = endDateInput.value ? addMinutes(endOfDay(endDateInput.value), 1) : null;
-        const filter = salesFilter.value;
-
-        const filteredSales = salesHistory.filter((sale) => {
-            const saleDate = startOfDay(sale.date);
-
-            // Date filters
-            const isWithinStartDate = startDate ? isAfter(saleDate, startDate) || isSameDay(saleDate, startDate) : true;
-            const isWithinEndDate = endDate ? isBefore(saleDate, endDate) || isSameDay(saleDate, endDate) : true;
-
-            // Quantity filters
-            const matchesFilter = 
-                filter === 'high' ? sale.quantity > 50 :
-                filter === 'medium' ? sale.quantity > 20 && sale.quantity <= 50 :
-                filter === 'low' ? sale.quantity <= 20 :
-                true;
-
-            return isWithinStartDate && isWithinEndDate && matchesFilter;
-        });
-
-        renderTable(filteredSales);
-    };
-
-    const downloadPDF = () => {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-
-        doc.setFontSize(16);
-        doc.text('CENTRE HOSPITALIER NOTRE DAME DE LA MERCI S.A - Pharma', 105, 20, null, null, 'center');
-        doc.setFontSize(10);
-        doc.text('Adresse : 5, Rue Rivière en face du Rectorat de l\'UEH', 105, 30, null, null, 'center');
-        doc.text('Email: pharmachndlm@gmail.com', 105, 35, null, null, 'center');
-        doc.text('Téléphone: +509 2910-3131', 105, 40, null, null, 'center');
-
-        doc.setLineWidth(0.5);
-        doc.line(10, 45, 200, 45);
-
-        doc.setFontSize(16);
-        doc.text('Rapport de Ventes - CHNDLM S.A - Pharma', 105, 55, { align: 'center' });
-
-        doc.setFontSize(12);
-        doc.text(`Date: ${new Date().toLocaleString()}`, 105, 65, { align: 'center' });
-
-        const startDate = startDateInput.value ? new Date(startDateInput.value).toLocaleDateString() : 'Non spécifiée';
-        const endDate = endDateInput.value ? new Date(endDateInput.value).toLocaleDateString() : 'Non spécifiée';
-        const filter = salesFilter.options[salesFilter.selectedIndex].text;
-
-        doc.text(`Période: ${startDate} - ${endDate}`, 105, 75, { align: 'center' });
-        doc.text(`Filtre: ${filter}`, 105, 85, { align: 'center' });
-
-        doc.autoTable({
-            html: '#sales-report-table',
-            startY: 90,
-            theme: 'striped',
-            headStyles: { fillColor: [60, 141, 188] },
-        });
-
-        doc.save('rapport_de_ventes.pdf');
-    };
-
-    // Function to add a new sale
-    function addSale(sale) {
-        const salesHistory = StorageManager.getSalesHistory();
-        salesHistory.push(sale);
-        StorageManager.saveSalesHistory(salesHistory);
-    }
-
-    // Removed the cleanupOldSales() method to prevent automatic deletion
-
-    document.getElementById('filter-button').addEventListener('click', filterSales);
-    document.getElementById('download-pdf').addEventListener('click', downloadPDF);
-    document.getElementById('clear-sales').addEventListener('click', () => {
-        if (confirm('Êtes-vous sûr de vouloir effacer toutes les ventes ? Cette action est irréversible.')) {
-            StorageManager.clearSalesHistory();
-            renderTable([]);
-        }
-    });
-
-    // Initial render with all data
-    renderTable(salesHistory);
-
-    // Expose addSale function globally if needed for other scripts
-    window.addSale = addSale;
-});
-    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+         // Improved localStorage management
+         const StorageManager = {
+             // Get sales history with error handling
+             getSalesHistory() {
+                 try {
+                     const sales = JSON.parse(localStorage.getItem('salesHistory')) || [];
+                     return Array.isArray(sales) ? sales : [];
+                 } catch (error) {
+                     console.error('Error retrieving sales history:', error);
+                     return [];
+                 }
+             },
+     
+             // Save sales history with error handling
+             saveSalesHistory(salesHistory) {
+                 try {
+                     localStorage.setItem('salesHistory', JSON.stringify(salesHistory));
+                 } catch (error) {
+                     console.error('Error saving sales history:', error);
+                     
+                     // Check for common localStorage errors
+                     if (error instanceof DOMException) {
+                         if (error.name === 'QuotaExceededError') {
+                             alert('Storage limit exceeded. Please clear some old data.');
+                         }
+                     }
+                 }
+             },
+     
+             clearSalesHistory() {
+                 try {
+                     localStorage.removeItem('salesHistory');
+                 } catch (error) {
+                     console.error('Error clearing sales history:', error);
+                 }
+             }
+         };
+     
+         // Get sales history
+         const salesHistory = StorageManager.getSalesHistory();
+     
+         const salesTableBody = document.querySelector('#sales-report-table tbody');
+         const startDateInput = document.getElementById('start-date');
+         const endDateInput = document.getElementById('end-date');
+         const salesFilter = document.getElementById('sales-filter');
+         const totalAmountElement = document.getElementById('total-amount');
+     
+         const renderTable = (data) => {
+             salesTableBody.innerHTML = '';
+             let totalSales = 0;
+     
+             if (data.length === 0) {
+                 salesTableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Aucune donnée disponible</td></tr>';
+                 totalAmountElement.textContent = '0';
+                 return;
+             }
+     
+             data.forEach((sale) => {
+                 const totalSalePrice = sale.quantity * sale.price;
+                 totalSales += totalSalePrice;
+     
+                 const row = document.createElement('tr');
+                 row.innerHTML = `
+                     <td>${sale.date}</td>
+                     <td>${sale.clientName}</td>
+                     <td>${sale.medication}</td>
+                     <td>${sale.quantity}</td>
+                     <td>${sale.price}</td>
+                     <td>${totalSalePrice.toFixed(2)}</td>
+                 `;
+                 salesTableBody.appendChild(row);
+             });
+     
+             // Add total period last line
+             const totalRow = document.createElement('tr');
+             const totalPrice = salesHistory.reduce((acc, sale) => (sale.price * sale.quantity) + acc, 0);
+             totalRow.innerHTML = `
+             <tr>
+                 <td colspan='5'><strong>Total</strong></td>
+                 <td>${totalPrice.toFixed(2)}</td>
+             </tr>
+             `;
+             salesTableBody.appendChild(totalRow);
+     
+             totalAmountElement.textContent = totalSales.toFixed(2);
+         };
+     
+         const filterSales = () => {
+             const { isAfter, isBefore, isSameDay, endOfDay, startOfDay, addMinutes } = window.dateFns
+     
+             const startDate = startDateInput.value ? startOfDay(startDateInput.value) : null;
+             const endDate = endDateInput.value ? addMinutes(endOfDay(endDateInput.value), 1) : null;
+             const filter = salesFilter.value;
+     
+             const filteredSales = salesHistory.filter((sale) => {
+                 const saleDate = startOfDay(sale.date);
+     
+                 // Date filters
+                 const isWithinStartDate = startDate ? isAfter(saleDate, startDate) || isSameDay(saleDate, startDate) : true;
+                 const isWithinEndDate = endDate ? isBefore(saleDate, endDate) || isSameDay(saleDate, endDate) : true;
+     
+                 // Quantity filters
+                 const matchesFilter = 
+                     filter === 'high' ? sale.quantity > 50 :
+                     filter === 'medium' ? sale.quantity > 20 && sale.quantity <= 50 :
+                     filter === 'low' ? sale.quantity <= 20 :
+                     true;
+     
+                 return isWithinStartDate && isWithinEndDate && matchesFilter;
+             });
+     
+             renderTable(filteredSales);
+         };
+     
+         const downloadPDF = () => {
+             const { jsPDF } = window.jspdf;
+             const doc = new jsPDF();
+     
+             doc.setFontSize(16);
+             doc.text('CENTRE HOSPITALIER NOTRE DAME DE LA MERCI S.A - Pharma', 105, 20, null, null, 'center');
+             doc.setFontSize(10);
+             doc.text('Adresse : 5, Rue Rivière en face du Rectorat de l\'UEH', 105, 30, null, null, 'center');
+             doc.text('Email: pharmachndlm@gmail.com', 105, 35, null, null, 'center');
+             doc.text('Téléphone: +509 2910-3131', 105, 40, null, null, 'center');
+     
+             doc.setLineWidth(0.5);
+             doc.line(10, 45, 200, 45);
+     
+             doc.setFontSize(16);
+             doc.text('Rapport de Ventes - CHNDLM S.A - Pharma', 105, 55, { align: 'center' });
+     
+             doc.setFontSize(12);
+             doc.text(`Date: ${new Date().toLocaleString()}`, 105, 65, { align: 'center' });
+     
+             const startDate = startDateInput.value ? new Date(startDateInput.value).toLocaleDateString() : 'Non spécifiée';
+             const endDate = endDateInput.value ? new Date(endDateInput.value).toLocaleDateString() : 'Non spécifiée';
+             const filter = salesFilter.options[salesFilter.selectedIndex].text;
+     
+             doc.text(`Période: ${startDate} - ${endDate}`, 105, 75, { align: 'center' });
+             doc.text(`Filtre: ${filter}`, 105, 85, { align: 'center' });
+     
+             doc.autoTable({
+                 html: '#sales-report-table',
+                 startY: 90,
+                 theme: 'striped',
+                 headStyles: { fillColor: [60, 141, 188] },
+             });
+     
+             doc.save('rapport_de_ventes.pdf');
+         };
+     
+         // Function to add a new sale
+         function addSale(sale) {
+             const salesHistory = StorageManager.getSalesHistory();
+             salesHistory.push(sale);
+             StorageManager.saveSalesHistory(salesHistory);
+         }
+     
+         // Removed the cleanupOldSales() method to prevent automatic deletion
+     
+         document.getElementById('filter-button').addEventListener('click', filterSales);
+         document.getElementById('download-pdf').addEventListener('click', downloadPDF);
+         document.getElementById('clear-sales').addEventListener('click', () => {
+             if (confirm('Êtes-vous sûr de vouloir effacer toutes les ventes ? Cette action est irréversible.')) {
+                 StorageManager.clearSalesHistory();
+                 renderTable([]);
+             }
+         });
+     
+         // Initial render with all data
+         renderTable(salesHistory);
+     
+         // Expose addSale function globally if needed for other scripts
+         window.addSale = addSale;
+     });
+         </script>
 </body>
 
 </html>
