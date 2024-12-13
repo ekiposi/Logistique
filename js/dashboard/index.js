@@ -264,7 +264,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 quantity: document.getElementById("med-quantity").value,
                 price: document.getElementById("med-price").value,
                 expirationDate: document.getElementById("med-expirationDate").value,
-                category: document.getElementById("med-category").value
+                category: document.getElementById("med-category").value,
+                type: 'medications'
             };
 
             if (Object.values(medication).some(val => !val)) {
