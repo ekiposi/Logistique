@@ -48,22 +48,20 @@ export const renderTable = (data) => {
     const endDate = endDateInput.value ? addMinutes(endOfDay(endDateInput.value), 1) : null;
     const filter = productTypeFilter.value;
 
-    const filteredData = products.filter((receivedProduct) => {
+    const receivedProducts = getProductsStock()
+    const filteredData = receivedProducts.filter((receivedProduct) => {
         const receivedDate = startOfDay(new Date(receivedProduct.receptionDate));
 
         // Date filters
         const isWithinStartDate = startDate ? isAfter(receivedDate, startDate) || isSameDay(receivedDate, startDate) : true;
         const isWithinEndDate = endDate ? isBefore(receivedDate, endDate) || isSameDay(receivedDate, endDate) : true;
 
-        
         // Type filters
         const matchesFilter = 
           filter === 'medications' ? receivedProduct.type === 'medications' :
           filter === 'equipments' ? receivedProduct.type === 'equipments' :
           filter === 'devices' ? receivedProduct.type === 'devices' :
           true;
-
-        console.log({isWithinStartDate, isWithinEndDate, matchesFilter})
 
         return isWithinStartDate && isWithinEndDate && matchesFilter;
     });
