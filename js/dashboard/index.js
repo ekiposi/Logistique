@@ -1,4 +1,4 @@
-import { addEquipment, getMedications, getDevices, getEquipments, updateEquipments } from '../db.js'
+import { addEquipment, getMedications, getDevices, getEquipments, updateEquipments, addDevice } from '../db.js'
 import { formatDate } from '../utils.js'
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -29,8 +29,6 @@ document.addEventListener('DOMContentLoaded', () => {
         deviceFormContainer: document.getElementById("device-form"),
         equipmentFormContainer: document.getElementById("equipment-form")
     };
-
-    console.log(elements)
 
     const formatCurrency = (value) => {
         return new Intl.NumberFormat('fr-FR', {
@@ -261,10 +259,11 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const medication = {
                 name: document.getElementById("med-name").value,
-                quantity: document.getElementById("med-quantity").value,
-                price: document.getElementById("med-price").value,
+                quantity: Number(document.getElementById("med-quantity").value),
+                price: Number(document.getElementById("med-price").value),
                 expirationDate: document.getElementById("med-expirationDate").value,
                 category: document.getElementById("med-category").value,
+                createdAt: formatDate(new Date()),
                 type: 'medications'
             };
 
@@ -464,8 +463,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const device = devices[index];
             document.getElementById("device-name").value = device.name || '';
             document.getElementById("device-quantity").value = device.quantity || '';
-            document.getElementById("device-date").value = device.dateAdded || new Date().toISOString().split('T')[0];
-            document.getElementById("device-function").value = device.function || '';
+            document.getElementById("device-date").value = device.createdAt || new Date().toISOString().split('T')[0];
+            document.getElementById("device-function").value = device.role || '';
+            document.getElementById("device-type").value = device.type || '';
             document.getElementById("device-info").value = device.additionalInfo || '';
             editingIndex = index;
         }
@@ -501,8 +501,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const equip = equipments[index];
             document.getElementById("equip-name").value = equip.name || '';
             document.getElementById("equip-quantity").value = equip.quantity || '';
-            document.getElementById("equip-date").value = equip.dateAdded || new Date().toISOString().split('T')[0];
-            document.getElementById("equip-function").value = equip.function || '';
+            document.getElementById("equip-date").value = equip.createdAt || new Date().toISOString().split('T')[0];
+            document.getElementById("equip-function").value = equip.role || '';
             document.getElementById("equip-type").value = equip.type || '';
             document.getElementById("equip-info").value = equip.additionalInfo || '';
             editingIndex = index;
@@ -514,15 +514,16 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const device = {
             name: document.getElementById("device-name").value,
-            quantity: document.getElementById("device-quantity").value,
-            dateAdded: document.getElementById("device-date").value,
-            function: document.getElementById("device-function").value,
+            quantity: Number(document.getElementById("device-quantity").value),
+            createdAt: document.getElementById("device-date").value,
+            role: document.getElementById("device-function").value,
             additionalInfo: document.getElementById("device-info").value,
-            isLowStock: parseInt(document.getElementById("device-quantity").value) < 4
+            type: document.getElementById('device-type').value,
+            price: document.getElementById('device-price').value
         };
 
         // Check if any required field is empty
-        const requiredFields = ["name", "quantity", "dateAdded", "function"];
+        const requiredFields = ["name", "quantity", "createdAt", "role", "price", "type"];
         const missingFields = requiredFields.filter(field => !device[field]);
         
         if (missingFields.length > 0) {
@@ -530,14 +531,8 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (editingIndex === -1) {
-            devices.push(device);
-        } else {
-            devices[editingIndex] = device;
-            editingIndex = -1;
-        }
+        addDevice(device)
 
-        localStorage.setItem('devices', JSON.stringify(devices));
         renderDeviceTable();
         elements.deviceFormContainer.classList.add("hidden");
     };
@@ -547,9 +542,9 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const equipment = {
             name: document.getElementById("equip-name").value,
-            quantity: document.getElementById("equip-quantity").value,
+            quantity: Number(document.getElementById("equip-quantity").value),
             createdAt: document.getElementById("equip-date").value,
-            price: document.getElementById("equip-price").value,
+            price: Number(document.getElementById("equip-price").value),
             role: document.getElementById("equip-function").value,
             type: document.getElementById("equip-type").value,
             additionalInfo: document.getElementById("equip-info").value,
@@ -571,13 +566,15 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const renderDeviceTable = () => {
+        devices = getDevices()
+
         elements.deviceTable.innerHTML = devices.map((device, index) => `
             <tr>
                 <td>${device.name}</td>
                 <td>${device.quantity}</td>
-                <td>${device.dateAdded}</td>
-                <td>${device.function}</td>
-                <td>${device.isLowStock ? 'Oui' : 'Non'}</td>
+                <td>${device.createdAt}</td>
+                <td>${device.role}</td>
+                <td>${device.quantity < 4 ? 'Oui' : 'Non'}</td>
                 <td>${device.additionalInfo}</td>
                 <td>
                     <button onclick="showDeviceForm(${index})" class="text-black py-1 px-2 rounded-lg mr-2">Modifier</button>
@@ -738,7 +735,6 @@ document.addEventListener('DOMContentLoaded', () => {
     window.downloadEquipmentPDF = downloadEquipmentPDF;
     window.showMedicationForm = showMedicationForm;
     window.deleteMedication = deleteMedication;
-    window.showDeviceForm = showDeviceForm;
     window.deleteDevice = deleteDevice;
     window.deleteEquipment = deleteEquipment;
     
