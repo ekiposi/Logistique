@@ -21,6 +21,9 @@ document.addEventListener('DOMContentLoaded', () => {
       return acc
     }, {})
 
+    // Get current stock before update
+    const currentStock = document.getElementById('current-stock').value
+
     // Update product quantity
     const isConcluded = updateProductQuantity(fieldsValues.productName, Number(fieldsValues.transferQuantity))
     if(!isConcluded) return
@@ -32,6 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
       quantityTransferred: Number(fieldsValues.transferQuantity),
       reason: fieldsValues.reason,
       createdAt: new Date(),
+      previousQuantity: Number(currentStock)
     }
 
     addProductTransferred(data)
@@ -172,8 +176,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const transferQuantityForm = document.querySelector('#transfer-quantity-form')
   transferQuantityForm.addEventListener('submit', createTransfer)
-
-
-  const addReceivedQuantity = document.querySelector('#transfer-quantity-form')
-  addReceivedQuantity.addEventListener('submit', addProductReceived)
 })

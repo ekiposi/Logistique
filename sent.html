@@ -292,10 +292,10 @@
                   Quantité Initiale
                 </th>
                 <th class="py-3 px-6 text-center border-b border-gray-300">
-                  Quantité Totale Reçue
+                  Quantité Totale Transferrée
                 </th>
                 <th class="py-3 px-6 text-center border-b border-gray-300">
-                  Quantité Transférée
+                  Quantité restante
                 </th>
                 <th class="py-3 px-6 text-center border-b border-gray-300">
                   Action
@@ -317,36 +317,53 @@
       function generatePDFReport() {
         const dataStart = document.getElementById("start-date").value;
         const dataEnd = document.getElementById("end-date").value;
-        const productType = document.getElementById("product-type").value;
+        const productType = document.getElementById("report-product-type").value;
 
-        const selectElement = document.getElementById("report-product-type");
-
-        selectElement.addEventListener("change", function () {
-          const selectedValue = selectElement.value;
-          document.getElementById("selected-value").textContent =
-            selectedValue || "Tous les produits";
+        // Get all transferred items from the table
+        const tableRows = document.querySelectorAll('#products-received-table tbody tr');
+        const tableData = Array.from(tableRows).map(row => {
+          const cells = row.querySelectorAll('td');
+          return [
+            cells[0].textContent, // Produit
+            cells[1].textContent, // Quantité
+            cells[2].textContent, // Date d'Ajout
+            cells[3].textContent, // Fonction
+            cells[4].textContent, // Type d'équipement
+            cells[5].textContent, // Quantité Faible
+            cells[6].textContent, // Informations supplémentaires
+            cells[7].textContent, // Quantité Initiale
+            cells[8].textContent, // Quantité Totale Transferrée
+            cells[9].textContent, // Quantité restante
+          ];
         });
 
-        description = `- date de début: ${dataStart} | date de fin: ${dataEnd} | type de produit: ${productType}`;
+        const description = `- date de début: ${dataStart} | date de fin: ${dataEnd} | type de produit: ${productType || 'Tous les produits'}`;
 
-        autoTable = {
+        const autoTable = {
           head: [
             [
               "Produit",
+              "Quantité",
+              "Date d'Ajout",
+              "Fonction",
+              "Type d'équipement",
+              "Quantité Faible",
+              "Informations supplémentaires",
               "Quantité Initiale",
-              "Quantité Transférée",
-              "Nouvelle Quantité",
+              "Quantité Totale Transferrée",
+              "Quantité restante"
             ],
           ],
-          body: [
-            // Exemple de données, remplacez par des données dynamiques
-            ["Produit A", "50", "5", "45"],
-            ["Produit B", "30", "10", "20"],
-          ],
+          body: tableData,
           margin: { top: 100 },
+          styles: { overflow: 'linebreak', fontSize: 8 }, // Smaller font to fit all columns
+          columnStyles: {
+            6: { cellWidth: 'auto' }, // Make Informations supplémentaires column wider
+          }
         };
+        
         formatPdf(
-          "Estimation Totale des Stocks",
+          "Rapport des Transferts de Stock",
           description,
           autoTable,
           "rapport_transfert.pdf"

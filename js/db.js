@@ -78,6 +78,11 @@ export const addDevice = (data) => {
   localStorage.setItem('devices', updatedData)
 }
 
+export const updateDevices = (data) => {
+  const updatedData = JSON.stringify(data)
+  localStorage.setItem('devices', updatedData)
+}
+
 // UPDATE PROFILE
 
 export const updateProfile = (data) => {

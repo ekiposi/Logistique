@@ -1,13 +1,22 @@
-import { addEquipment, getMedications, getDevices, getEquipments, updateEquipments, addDevice } from '../db.js'
+import { addEquipment, getMedications, getDevices, getEquipments, updateEquipments, addDevice, updateMedications, updateDevices } from '../db.js'
 import { formatDate } from '../utils.js'
 
 document.addEventListener('DOMContentLoaded', () => {
     const { isBefore } = window.dateFns
 
-    let medications = getMedications()
-    let devices = getDevices()
-    let equipments = getEquipments()
-    let editingIndex = -1;
+    // Initialize global variables
+    let medications = [];
+    let devices = [];
+    let equipments = [];
+    window.editingIndex = -1;
+
+    // Load initial data
+    const loadInitialData = () => {
+        medications = getMedications();
+        devices = getDevices();
+        equipments = getEquipments();
+    };
+    loadInitialData();
 
     const elements = {
         medicationForm: document.getElementById("add-medication-form"),
@@ -246,35 +255,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const setupEventListeners = () => {
         elements.addMedicationBtn.addEventListener("click", () => showMedicationForm());
         
-        elements.medicationForm.addEventListener("submit", (event) => {
-            event.preventDefault();
-
-            const expirationDate = document.getElementById("med-expirationDate").value
-            const isBeforeToday = isBefore(new Date(expirationDate), new Date())
-
-            if (isBeforeToday) {
-                window.alert("Medicine is expired, can't update the product")
-                return
-            }
-            
-            const medication = {
-                name: document.getElementById("med-name").value,
-                quantity: Number(document.getElementById("med-quantity").value),
-                price: Number(document.getElementById("med-price").value),
-                expirationDate: document.getElementById("med-expirationDate").value,
-                category: document.getElementById("med-category").value,
-                createdAt: formatDate(new Date()),
-                type: 'medications'
-            };
-
-            if (Object.values(medication).some(val => !val)) {
-                alert("Tous les champs sont obligatoires !");
-                return;
-            }
-
-            addMedication(medication);
-        });
-
+        elements.medicationForm.addEventListener("submit", handleMedicationSubmit);
+        
         const filters = [
             elements.searchBar,
             elements.categoryFilter,
@@ -287,8 +269,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 renderFilteredTable
             );
         });
-
-        
 
         elements.addDeviceBtn.addEventListener("click", () => showDeviceForm());
         elements.deviceForm.addEventListener("submit", handleDeviceSubmit);
@@ -441,14 +421,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const isEquipmentFormHidden = elements.equipmentFormContainer.classList.contains('hidden')
         if(!isEquipmentFormHidden) elements.equipmentFormContainer.classList.toggle('hidden')
 
-        // Toggle visibility
-        elements.deviceFormContainer.classList.toggle("hidden");
-        
-        // If already visible, hide and return
-        if (elements.deviceFormContainer.classList.contains("hidden")) {
-            return;
-        }
-
         const formTitle = document.getElementById("device-form-title");
         
         if (index === -1) {
@@ -461,14 +433,18 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             formTitle.innerText = "Modifier un appareil médical";
             const device = devices[index];
-            document.getElementById("device-name").value = device.name || '';
-            document.getElementById("device-quantity").value = device.quantity || '';
-            document.getElementById("device-date").value = device.createdAt || new Date().toISOString().split('T')[0];
-            document.getElementById("device-function").value = device.role || '';
-            document.getElementById("device-type").value = device.type || '';
-            document.getElementById("device-info").value = device.additionalInfo || '';
+            
+            ['device-name', 'device-quantity', 'device-date', 'device-function', 'device-type', 'device-info']
+                .forEach(id => {
+                    const field = document.getElementById(id);
+                    const key = id.split('-')[1];
+                    field.value = device[key === 'function' ? 'role' : key] || '';
+                });
+            
             editingIndex = index;
         }
+        
+        elements.deviceFormContainer.classList.toggle("hidden");
     };
 
     const showEquipmentForm = (index = -1) => {
@@ -476,16 +452,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const isMedicationFormHidden = elements.medicationFormContainer.classList.contains('hidden')
         if(!isMedicationFormHidden) elements.medicationFormContainer.classList.toggle('hidden')
 
-        const isDeviceFormHidden = elements.medicationFormContainer.classList.contains('hidden')
-        if(!isDeviceFormHidden) elements.medicationFormContainer.classList.toggle('hidden')
-
-        // Toggle visibility
-        elements.equipmentFormContainer.classList.toggle("hidden");
-        
-        // If already visible, hide and return
-        if (elements.equipmentFormContainer.classList.contains("hidden")) {
-            return;
-        }
+        const isDeviceFormHidden = elements.deviceFormContainer.classList.contains('hidden')
+        if(!isDeviceFormHidden) elements.deviceFormContainer.classList.toggle('hidden')
 
         const formTitle = document.getElementById("equipment-form-title");
         
@@ -498,71 +466,145 @@ document.addEventListener('DOMContentLoaded', () => {
             editingIndex = -1;
         } else {
             formTitle.innerText = "Modifier un équipement médical";
-            const equip = equipments[index];
-            document.getElementById("equip-name").value = equip.name || '';
-            document.getElementById("equip-quantity").value = equip.quantity || '';
-            document.getElementById("equip-date").value = equip.createdAt || new Date().toISOString().split('T')[0];
-            document.getElementById("equip-function").value = equip.role || '';
-            document.getElementById("equip-type").value = equip.type || '';
-            document.getElementById("equip-info").value = equip.additionalInfo || '';
+            const equipment = equipments[index];
+            
+            ['equip-name', 'equip-quantity', 'equip-date', 'equip-function', 'equip-type', 'equip-info']
+                .forEach(id => {
+                    const field = document.getElementById(id);
+                    const key = id.split('-')[1];
+                    field.value = equipment[key === 'function' ? 'role' : key] || '';
+                });
+            
             editingIndex = index;
         }
+        
+        elements.equipmentFormContainer.classList.toggle("hidden");
     };
 
     const handleDeviceSubmit = (event) => {
         event.preventDefault();
-        
+
         const device = {
             name: document.getElementById("device-name").value,
             quantity: Number(document.getElementById("device-quantity").value),
             createdAt: document.getElementById("device-date").value,
             role: document.getElementById("device-function").value,
-            additionalInfo: document.getElementById("device-info").value,
-            type: document.getElementById('device-type').value,
-            price: document.getElementById('device-price').value
+            type: document.getElementById("device-type").value,
+            additionalInfo: document.getElementById("device-info").value || ''
         };
 
-        // Check if any required field is empty
-        const requiredFields = ["name", "quantity", "createdAt", "role", "price", "type"];
-        const missingFields = requiredFields.filter(field => !device[field]);
-        
-        if (missingFields.length > 0) {
-            alert("Tous les champs sont obligatoires !");
+        if (!device.name || !device.quantity || !device.createdAt || !device.role) {
+            alert("Please fill in all required fields!");
             return;
         }
 
-        addDevice(device)
+        // Check for duplicate names except for the current editing item
+        if (devices.some((dev, index) => 
+            dev.name.toLowerCase() === device.name.toLowerCase() && 
+            index !== editingIndex
+        )) {
+            alert("Un appareil avec ce nom existe déjà!");
+            return;
+        }
 
-        renderDeviceTable();
+        if (editingIndex !== -1) {
+            // Update existing device
+            devices[editingIndex] = device;
+            updateDevices(devices);
+            editingIndex = -1; // Reset editing index
+        } else {
+            // Add new device
+            devices.push(device);
+            updateDevices(devices);
+        }
+
+        elements.deviceForm.reset();
         elements.deviceFormContainer.classList.add("hidden");
+        renderDeviceTable();
     };
 
     const handleEquipmentSubmit = (event) => {
         event.preventDefault();
-        
+
         const equipment = {
             name: document.getElementById("equip-name").value,
             quantity: Number(document.getElementById("equip-quantity").value),
             createdAt: document.getElementById("equip-date").value,
-            price: Number(document.getElementById("equip-price").value),
             role: document.getElementById("equip-function").value,
             type: document.getElementById("equip-type").value,
-            additionalInfo: document.getElementById("equip-info").value,
+            additionalInfo: document.getElementById("equip-info").value || ''
         };
 
-        // Check if any required field is empty
-        const requiredFields = ["name", "quantity", "createdAt", "role", "type", "price"];
-        const missingFields = requiredFields.filter(field => !equipment[field]);
+        if (!equipment.name || !equipment.quantity || !equipment.createdAt || !equipment.role || !equipment.type) {
+            alert("Please fill in all required fields!");
+            return;
+        }
+
+        // Check for duplicate names except for the current editing item
+        if (equipments.some((equip, index) => 
+            equip.name.toLowerCase() === equipment.name.toLowerCase() && 
+            index !== editingIndex
+        )) {
+            alert("Un équipement avec ce nom existe déjà!");
+            return;
+        }
+
+        if (editingIndex !== -1) {
+            // Update existing equipment
+            equipments[editingIndex] = equipment;
+            updateEquipments(equipments);
+            editingIndex = -1; // Reset editing index
+        } else {
+            // Add new equipment
+            equipments.push(equipment);
+            updateEquipments(equipments);
+        }
+
+        elements.equipmentForm.reset();
+        elements.equipmentFormContainer.classList.add("hidden");
+        renderEquipmentTable();
+    };
+
+    const handleMedicationSubmit = (event) => {
+        event.preventDefault();
+
+        const expirationDate = document.getElementById("med-expirationDate").value;
+        const isBeforeToday = isBefore(new Date(expirationDate), new Date());
+
+        if (isBeforeToday) {
+            window.alert("Medicine is expired, can't update the product");
+            return;
+        }
         
-        if (missingFields.length > 0) {
+        const medication = {
+            name: document.getElementById("med-name").value,
+            quantity: Number(document.getElementById("med-quantity").value),
+            price: Number(document.getElementById("med-price").value),
+            expirationDate: document.getElementById("med-expirationDate").value,
+            category: document.getElementById("med-category").value,
+            createdAt: formatDate(new Date()),
+            type: 'medications'
+        };
+
+        if (Object.values(medication).some(val => !val)) {
             alert("Tous les champs sont obligatoires !");
             return;
         }
 
-        addEquipment(equipment)
-        renderEquipmentTable();
-        
-        elements.equipmentFormContainer.classList.add("hidden");
+        if (editingIndex !== -1) {
+            // Update existing medication
+            medications[editingIndex] = medication;
+            updateMedications(medications);
+            editingIndex = -1; // Reset editing index
+        } else {
+            // Add new medication
+            medications.push(medication);
+            updateMedications(medications);
+        }
+
+        elements.medicationForm.reset();
+        elements.medicationFormContainer.classList.add("hidden");
+        renderFilteredTable();
     };
 
     const renderDeviceTable = () => {
@@ -692,16 +734,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const doc = new jsPDF();
 
         // Create table data manually
-        const tableColumn = ["Nom", "Quantité", "Date d'ajout", "Fonction", "Type", "Quantité Faible", "Informations", "Action"];
-        const tableRows = equipment.map(equip => [
+        const tableColumn = ["Nom", "Quantité", "Date d'ajout", "Fonction", "Type", "Informations"];
+        const tableRows = equipments.map(equip => [
             equip.name,
             equip.quantity,
-            equip.dateAdded,
-            equip.function,
+            equip.createdAt,
+            equip.role,
             equip.type,
-            equip.isLowStock ? 'Oui' : 'Non',
-            equip.additionalInfo,
-             // Empty action column for PDF
+            equip.additionalInfo || ''
         ]);
 
         doc.setFontSize(16);
@@ -734,6 +774,8 @@ document.addEventListener('DOMContentLoaded', () => {
     window.downloadDevicesPDF = downloadDevicesPDF;
     window.downloadEquipmentPDF = downloadEquipmentPDF;
     window.showMedicationForm = showMedicationForm;
+    window.showDeviceForm = showDeviceForm;
+    window.showEquipmentForm = showEquipmentForm;
     window.deleteMedication = deleteMedication;
     window.deleteDevice = deleteDevice;
     window.deleteEquipment = deleteEquipment;
@@ -741,3 +783,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize
     initializeApp();
 });
+
+// Make sure editingIndex is accessible globally
+window.editingIndex = -1;

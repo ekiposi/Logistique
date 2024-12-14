@@ -1,7 +1,7 @@
 const users = [
-    { username: 'caissier24', password: 'hello', redirectUrl: './caissier/jesyon.html' },
+    { username: 'caissier24', password: 'hello', redirectUrl: './caissier/dashboard.html' },
     { username: 'DrErla24', password: 'Erla', redirectUrl: 'dashboard.html' },
-    { username: 'meow', password: 'meow', redirectUrl: 'jesyon.html' }
+    { username: 'meow', password: 'meow', redirectUrl: 'dashboard.html' }
 ];
 
 const form = document.getElementById('loginForm');

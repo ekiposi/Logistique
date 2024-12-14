@@ -33,7 +33,7 @@ export const renderTable = (data) => {
       <td>${tranferedProduct.reason}</td>
       <td>${tranferedProduct.previousQuantity}</td>
       <td>${tranferedProduct.quantityTransferred}</td>
-      <td>${tranferedProduct.newQuantity}</td>
+      <td>${tranferedProduct.previousQuantity - tranferedProduct.quantityTransferred}</td>
       <td class="flex gap-2.5 border-none">
         <img src="../../images/icons/edit.png" alt="" class="w-7 h-7 cursor-pointer" />
         <img src="../../images/icons/trash.png" alt="" class="w-7 h-7 cursor-pointer" />
