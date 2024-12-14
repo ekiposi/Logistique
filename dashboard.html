@@ -4,173 +4,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Système de Gestion de produits - CHNDLM S.A - Pharma (admin)</title>
+    <title>Système de Gestion de Produits - CHNDLM S.A</title>
 
-    <link href="fonts/LexendDecaRegular.ttf" rel="stylesheet">
-    <link rel="stylesheet" href="./css/output.css">
-    <link rel="stylesheet" href="css/tailwind.min.css">
-    <link rel="stylesheet" href="css/dashboard/dashstyle.css">
-    
-    <script src="js/cdn.min.js"></script>
-    <script src="
-    https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js
-    "></script>
-    <script src="https://cdn.jsdelivr.net/npm/date-fns@3.6.0/cdn.min.js"></script>
-    <script src="js/jspdf.umd.min.js"></script>
-    <script src="js/jspdf.plugin.autotable.min.js"></script>
-    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600&display=swap" rel="stylesheet">
+
     <style>
-        @font-face {
-            font-family: 'LexendDeca';
-            src: url('fonts/LexendDecaRegular.ttf') format('truetype');
-            font-weight: normal;
-            font-style: normal;
-        }
-
         body {
-            font-family: 'LexendDeca', sans-serif;
+            font-family: 'Lexend', sans-serif;
+            background-color: #f9fafb;
+            color: #333;
         }
 
-        .add-btn {
-            margin-left: 1rem;
-            margin-right: 1rem;
+        .header {
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 1rem 2rem;
+        }
+
+        .sidebar {
+            background: linear-gradient(135deg, #cbbbff, #827bff);
+            color: #fff;
+        }
+
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            margin: 0.5rem 0;
+            text-decoration: none;
+            color: #fff;
+            transition: background 0.3s;
+        }
+
+        .sidebar a.active, .sidebar a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
         }
 
         .card {
-            margin-top: 2rem;
-            margin-bottom: 2rem;
+            background: #fff;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .chart-container {
+            background: #fff;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-top: 1rem;
+        }
+
+        .footer {
+            background: #f4f4f4;
+            padding: 1rem 2rem;
+            text-align: center;
+            font-size: 0.875rem;
+            color: #555;
+        }
+
+        .gradient-highlight {
+            background: blanchedalmond;
+            color: #fff;
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
         }
     </style>
 </head>
 
-<body class="bg-gray-100">
-   <header class="bg-green-200 text-black p-6 shadow-lg">
-    <div class="container mx-auto flex flex-wrap justify-between items-center">
-        <h1 class="text-3xl mb-4 md:mb-0">Tableau de Bord - CHNDLM S.A - Warehouse</h1>
-        <nav class="flex flex-wrap space-x-4">
+<body>
+    <header class="header flex justify-between items-center">
+        <h1 class="text-xl font-semibold">Tableau de Bord - CHNDLM S.A</h1>
+        <div class="flex items-center gap-4">
+            <input type="text" placeholder="Rechercher..." class="border rounded-lg px-3 py-2">
+            <div class="flex gap-2 items-center">
+                <span class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">🔔</span>
+                <span class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">⚙️</span>
+                <img src="profile.jpg" alt="Profil" class="w-8 h-8 rounded-full">
+            </div>
+        </div>
+    </header>
 
-            <a href="ajout.html" class="text-lg hover:text-green-600">Ajout de produits</a>
-            <a href="jesyon.html" class="text-lg hover:text-green-600">Gestion des Ventes</a>
-            <a href="estimation.html" class="text-lg hover:text-green-600">Estimation totale des stocks</a>
-            <a href="perime.html" class="text-lg hover:text-green-600">Produits Périmés</a>
-            <a href="notif.html" class="text-lg hover:text-green-600">Quantités insuffisantes</a>
-            <a href="sent.html" class="text-lg hover:text-green-600">Rapports de transferts</a>
-            <a href="received.html" class="text-lg hover:text-green-600">Rapports de réceptions</a>
-            <a href="report.html" class="text-lg hover:text-green-600">Rapports de ventes</a>
-            <a href="profile.html" class="text-lg hover:text-green-600">Profil</a>
-            <a href="index.html" class="text-lg text-red-600 hover:text-red-800">Déconnexion</a>
+    <div class="flex">
+        <!-- Sidebar -->
+        <nav class="sidebar w-64 h-screen p-4">
+            <a href="ajout.html" class="active"><span>➕</span> Ajout de Produits</a>
+            <a href="jesyon.html"><span>📊</span> Gestion des Ventes</a>
+            <a href="estimation.html"><span>📦</span> Estimation des Stocks</a>
+            <a href="perime.html"><span>⚠️</span> Produits Périmés</a>
+            <a href="notif.html"><span>🔔</span> Quantités Insuffisantes</a>
+            <a href="sent.html"><span>🚛</span> Rapports de Transferts</a>
+            <a href="received.html"><span>📥</span> Rapports de Réceptions</a>
+            <a href="report.html"><span>📄</span> Rapports de Ventes</a>
+            <a href="perfil.html"><span>👤</span> Profil</a>
+            <a href="index.html"><span>🚪</span> Déconnexion</a>
         </nav>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-4">
+            <!-- Stats Cards -->
+            <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div class="card">
+                    <h3 class="text-lg font-semibold">Stock Total Disponible</h3>
+                    <p class="text-4xl font-bold" id="total-stock-count">0</p>
+                    <p class="text-sm text-gray-500">+3.5% vs mois dernier</p>
+                </div>
+
+                <div class="card">
+                    <h3 class="text-lg font-semibold">Transferts (30 derniers jours)</h3>
+                    <p class="text-4xl font-bold" id="transfers-count">152</p>
+                </div>
+
+                <div class="card">
+                    <h3 class="text-lg font-semibold">Réceptions (30 derniers jours)</h3>
+                    <p class="text-4xl font-bold" id="received-count">234</p>
+                </div>
+            </section>
+
+            <!-- Charts -->
+            <section class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                <div class="chart-container">
+                    <h3 class="text-lg font-semibold">Mouvements de Stock</h3>
+                    <canvas id="stockMovementChart"></canvas>
+                </div>
+
+                <div class="chart-container">
+                    <h3 class="text-lg font-semibold">Distribution par Catégorie</h3>
+                    <canvas id="categoryDistributionChart"></canvas>
+                </div>
+            </section>
+        </main>
     </div>
-</header>
-    <main class="container mx-auto px-4 mt-8">
-        <section class="flex justify-center gap-10">
-            <!-- Graph: Transferred quantity -->
-            <div class="w-full max-w-md bg-white p-6 rounded-lg shadow-md m-2 card">
-                <h3 class="text-gray-500 text-sm">Total Transferred Quantity</h3>
-                
-                <canvas id="transferred-quantity" class="my-5"></canvas>
-                
-                <div class="my-4">
-                    <span id="transferred-percentual" class="text-sm font-semibold"></span>
-                    <span class="text-gray-400 text-sm"> vs mois dernier</span>
-                </div>
-            </div>
 
-            <!-- Graph: Received quantity -->
-            <div class="w-full max-w-md bg-white p-6 rounded-lg shadow-md m-2 card">
-                <h3 class="text-gray-500 text-sm">Total Received Quantity</h3>
-                
-                <canvas id="received-quantity" class="my-5"></canvas>
-                
-                <div class="my-4">
-                    <span id="received-percentual" class="text-sm font-semibold"></span>
-                    <span class="text-gray-400 text-sm"> vs mois dernier</span>
-                </div>
-            </div>
-        </section>
+    <footer class="footer">
+        &copy; 2024 CHNDLM S.A - Tous droits réservés.
+    </footer>
 
-        <section class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-            <!-- Card: Total Stock -->
-            <div class="bg-white p-6 rounded-lg shadow-md m-2 card">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h3 class="text-gray-500 text-sm">Stock Total Disponible</h3>
-                        <p class="text-2xl font-bold" id="total-stock-count">0</p>
-                    </div>
-                    <div class="bg-green-100 p-3 rounded-full">
-                        <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
-                        </svg>
-                    </div>
-                </div>
-                <div class="my-4">
-                    <span class="text-green-500 text-sm font-semibold">+3.5%</span>
-                    <span class="text-gray-400 text-sm"> vs mois dernier</span>
-                </div>
-            </div>
-
-            <!-- Card: Transferred Items -->
-            <div class="bg-white p-6 rounded-lg shadow-md m-2 card">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h3 class="text-gray-500 text-sm">Transferts (30 derniers jours)</h3>
-                        <p class="text-2xl font-bold" id="transfers-count">0</p>
-                    </div>
-                    <div class="bg-blue-100 p-3 rounded-full">
-                        <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
-                        </svg>
-                    </div>
-                </div>
-                <div class="mt-4">
-                    <span class="text-blue-500 text-sm font-semibold">152 articles</span>
-                    <span class="text-gray-400 text-sm"> transférés</span>
-                </div>
-            </div>
-
-            <!-- Card: Received Items -->
-            <div class="bg-white p-6 rounded-lg shadow-md m-2 card">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h3 class="text-gray-500 text-sm">Réceptions (30 derniers jours)</h3>
-                        <p class="text-2xl font-bold" id="received-count">0</p>
-                    </div>
-                    <div class="bg-purple-100 p-3 rounded-full">
-                        <svg class="w-6 h-6 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2">
-                            </path>
-                        </svg>
-                    </div>
-                </div>
-                <div class="mt-4">
-                    <span class="text-purple-500 text-sm font-semibold">234 articles</span>
-                    <span class="text-gray-400 text-sm"> reçus</span>
-                </div>
-            </div>
-        </section>
-
-        <!-- Charts Section -->
-        <section class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-            <!-- Stock Movement Chart -->
-            <div class="bg-white p-6 rounded-lg shadow-md card">
-                <h3 class="text-lg font-semibold mb-4">Mouvements de Stock</h3>
-                <canvas id="stockMovementChart" height="200"></canvas>
-            </div>
-
-            <!-- Category Distribution Chart -->
-            <div class="bg-white p-6 rounded-lg shadow-md card">
-                <h3 class="text-lg font-semibold mb-4">Distribution par Catégorie</h3>
-                <canvas id="categoryDistributionChart" height="200"></canvas>
-            </div>
-        </section>
-    </main>
-
-    <script src="js/db.js" type="module"></script>
-    <script src="js/dashboard/index.js"></script>
-    <script src="js/dashboard/graphs.js" type="module"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Example Chart.js initialization
+        const ctx1 = document.getElementById('stockMovementChart').getContext('2d');
+        new Chart(ctx1, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Fév', 'Mars', 'Avr', 'Mai'],
+                datasets: [{
+                    label: 'Mouvements',
+                    data: [50, 60, 70, 80, 90],
+                    borderColor: '#7e5bef',
+                    backgroundColor: 'rgba(126, 91, 239, 0.1)',
+                    tension: 0.4,
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                }
+            }
+        });
+    </script>
 </body>
 
 </html>
