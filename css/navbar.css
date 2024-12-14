@@ -1,0 +1,271 @@
+@font-face {
+    font-family: 'LexendDeca';
+    src: url('fonts/LexendDecaRegular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    font-family: 'LexendDeca', sans-serif;
+}
+
+/* Navbar Styles */
+.nav-link {
+    position: relative;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    margin: 6px 0;
+    padding: 12px 16px;
+    color: #1f2937;
+    display: flex;
+    align-items: center;
+    font-size: 1.1rem;
+    gap: 8px;
+}
+.nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.5);
+    transform: translateX(5px);
+    color: #1d4ed8;
+}
+
+.nav-link.active {
+    background-color: #ffffff;
+    color: #1d4ed8;
+    font-weight: 600;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.nav-link::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    background-color: #1d4ed8;
+    transition: all 0.3s ease;
+    border-radius: 0 3px 3px 0;
+}
+
+.nav-link:hover::before,
+.nav-link.active::before {
+    width: 4px;
+    height: 70%;
+}
+
+.nav-link.logout {
+    margin-top: 2rem;
+    color: #dc2626;
+}
+
+.nav-link.logout:hover {
+    background-color: #fee2e2;
+    color: #b91c1c;
+}
+
+.nav-title {
+    padding: 1rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+}
+
+.nav-title h1 {
+    color: #1d4ed8;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.75rem;
+}
+
+.add-btn {
+    margin-left: 1rem;
+    margin-right: 1rem;
+}
+
+.card {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+nav {
+    background-color: #bbf7d0; /* This matches your green-200 color */
+    padding: 2rem;
+    width: 250px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+nav a {
+    margin: 0.5rem 0;
+    padding: 0.5rem;
+    width: 100%;
+    display: block;
+}
+
+/* Adjust the header and main content to accommodate the sidebar */
+header {
+    margin-left: 250px;
+}
+
+main {
+    margin-left: 250px;
+}
+
+/* Make header title smaller to fit better */
+header h1 {
+    font-size: 1.5rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    nav {
+        position: static;
+        width: 100%;
+        height: auto;
+    }
+    
+    header, main {
+        margin-left: 0;
+    }
+}
+
+/* Card and Graph Styles */
+.dashboard-card {
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(229, 231, 235, 1);
+}
+
+.dashboard-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.card-title {
+    color: #1e40af;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.card-value {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: #1d4ed8;
+    margin: 0.5rem 0;
+}
+
+.card-icon {
+    background-color: #dbeafe;
+    padding: 1rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-icon svg {
+    color: #1d4ed8;
+}
+
+.card-trend {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.trend-up {
+    color: #059669;
+}
+
+.trend-down {
+    color: #dc2626;
+}
+
+.graph-container {
+    padding: 1.5rem;
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(229, 231, 235, 1);
+}
+
+.graph-title {
+    color: #1e40af;
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+canvas {
+    margin: 1rem 0;
+}
+
+/* Scrollbar Styles */
+/* Hide scrollbar for Chrome, Safari and Opera */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #94a3b8;
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
+}
+
+/* Hide scrollbar for Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #94a3b8 transparent;
+}
+
+/* Hide scrollbar when not hovering */
+nav {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+}
+
+nav::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+}
+
+nav:hover {
+    scrollbar-width: thin;
+    -ms-overflow-style: auto;
+}
+
+nav:hover::-webkit-scrollbar {
+    display: block;
+}
+
+/* Main content scrollbar */
+main {
+    overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+main::-webkit-scrollbar {
+    display: none;
+}
+
+main:hover {
+    scrollbar-width: thin;
+    -ms-overflow-style: auto;
+}
+
+main:hover::-webkit-scrollbar {
+    display: block;
+}
