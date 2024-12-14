@@ -197,6 +197,70 @@
           </form>
         </section>
 
+        <!-- Edit device form  -->
+        <section id="received-form" class="hidden mb-8 p-6 bg-white rounded-lg shadow-md my-8">
+            <h2 id="received-form-title" class="text-2xl mb-4">Modifier le produit reçu</h2>
+            <form id="add-received-form" class="space-y-4">
+                <div>
+                    <label for="product-type" class="block text-gray-700">Type de Produit</label>
+                    <select id="product-type-edit" class="w-full border border-gray-300 rounded-lg p-2">
+                        <option value="">Sélectionnez un type de produit</option>
+                        <option selected value="medications">Médicament</option>
+                        <option value="equipments">Équipement Médical</option>
+                        <option value="devices">Appareil Médical</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="product" class="block text-gray-700">Produit</label>
+                    
+                    <select type="text" id="product-edit" placeholder="Rechercher un produit..." class="w-full border border-gray-300 rounded-lg p-2">
+                        <option value="">Sélectionnez un produit</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="current-stock" class="block text-gray-700">Quantité Actuelle en Stock</label>
+                    <input type="number" id="current-stock-edit" readonly
+                        class="w-full border border-gray-300 rounded-lg p-2 bg-gray-100">
+                </div>
+
+                <div>
+                    <label for="fonction" class="block text-gray-700">Fonction</label>
+                    <div class="relative">
+                        <input type="text" id="fonction-edit" class="w-full border border-gray-300 rounded-lg p-2">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="extra-information" class="block text-gray-700">Informations supplementaires</label>
+                    <div class="relative">
+                        <input type="text" id="extra-information-edit" class="w-full border border-gray-300 rounded-lg p-2">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="reception-date" class="block text-gray-700">Date de réception</label>
+                    <input type="date" id="reception-date-edit" required class="w-full border border-gray-300 rounded-lg p-2">
+                </div>
+                
+                <div>
+                    <label for="new-quantity" class="block text-gray-700">Ajouter une Quantité</label>
+                    <input type="number" id="new-quantity-edit" placeholder="Quantité reçue" min="1"
+                        class="w-full border border-gray-300 rounded-lg p-2">
+                </div>
+
+                <div>
+                    <label for="supplier-info" class="block text-gray-700">Fournisseur</label>
+                    <input type="text" id="supplier-info-edit" placeholder="Nom du fournisseur"
+                        class="w-full border border-gray-300 rounded-lg p-2">
+                </div>
+
+                <button type="submit"
+                    class="bg-green-400 hover:bg-green-500 text-black py-2 px-4 rounded-lg">MOdifier</button>
+            </form>
+        </section>
+
         <!-- Générer un Rapport -->
         <section class="p-6 bg-white rounded-lg shadow-md mt-8">
           <h2 class="text-2xl font-bold mb-4">Générer un Rapport</h2>
@@ -298,7 +362,6 @@
 
     <script src="js/db.js" type="module"></script>
     <script src="js/utils.js" type="module"></script>
-    <script src="js/dashboard/index.js"></script>
     <script src="js/received/index.js" type="module"></script>
     <script src="js/received/table.js" type="module"></script>
     <script src="js/navbar.js"></script>
