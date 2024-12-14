@@ -4,166 +4,445 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Système de Gestion de Produits - CHNDLM S.A</title>
+    <title>Système de Gestion de produits - CHNDLM S.A - Pharma (admin)</title>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600&display=swap" rel="stylesheet">
-
+    <link href="fonts/LexendDecaRegular.ttf" rel="stylesheet">
+    <link rel="stylesheet" href="./css/output.css">
+    <link rel="stylesheet" href="css/tailwind.min.css">
+    <link rel="stylesheet" href="css/dashboard/dashstyle.css">
+    
+    <script src="js/cdn.min.js"></script>
+    <script src="
+    https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js
+    "></script>
+    <script src="https://cdn.jsdelivr.net/npm/date-fns@3.6.0/cdn.min.js"></script>
+    <script src="js/jspdf.umd.min.js"></script>
+    <script src="js/jspdf.plugin.autotable.min.js"></script>
+    
     <style>
+        @font-face {
+            font-family: 'LexendDeca';
+            src: url('fonts/LexendDecaRegular.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
         body {
-            font-family: 'Lexend', sans-serif;
-            background-color: #f9fafb;
-            color: #333;
+            font-family: 'LexendDeca', sans-serif;
         }
 
-        .header {
-            background-color: #ffffff;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            padding: 1rem 2rem;
-        }
-
-        .sidebar {
-            background: linear-gradient(135deg, #cbbbff, #827bff);
-            color: #fff;
-        }
-
-        .sidebar a {
+        /* Navbar Styles */
+        .nav-link {
+            position: relative;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            margin: 6px 0;
+            padding: 12px 16px;
+            color: #1f2937;
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            padding: 0.75rem 1rem;
-            border-radius: 0.5rem;
-            margin: 0.5rem 0;
-            text-decoration: none;
-            color: #fff;
-            transition: background 0.3s;
+            font-size: 1.1rem;
+            gap: 8px;
+        }
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.5);
+            transform: translateX(5px);
+            color: #1d4ed8;
         }
 
-        .sidebar a.active, .sidebar a:hover {
-            background-color: rgba(255, 255, 255, 0.2);
+        .nav-link.active {
+            background-color: #ffffff;
+            color: #1d4ed8;
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            background-color: #1d4ed8;
+            transition: all 0.3s ease;
+            border-radius: 0 3px 3px 0;
+        }
+
+        .nav-link:hover::before,
+        .nav-link.active::before {
+            width: 4px;
+            height: 70%;
+        }
+
+        .nav-link.logout {
+            margin-top: 2rem;
+            color: #dc2626;
+        }
+
+        .nav-link.logout:hover {
+            background-color: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .nav-title {
+            padding: 1rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-title h1 {
+            color: #1d4ed8;
+            font-size: 1.5rem;
+            font-weight: 700;
+            line-height: 1.75rem;
+        }
+
+        .add-btn {
+            margin-left: 1rem;
+            margin-right: 1rem;
         }
 
         .card {
-            background: #fff;
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-top: 2rem;
+            margin-bottom: 2rem;
         }
 
-        .chart-container {
-            background: #fff;
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            margin-top: 1rem;
+        nav {
+            background-color: #bbf7d0; /* This matches your green-200 color */
+            padding: 2rem;
+            width: 250px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
         }
 
-        .footer {
-            background: #f4f4f4;
-            padding: 1rem 2rem;
-            text-align: center;
+        nav a {
+            margin: 0.5rem 0;
+            padding: 0.5rem;
+            width: 100%;
+            display: block;
+        }
+
+        /* Adjust the header and main content to accommodate the sidebar */
+        header {
+            margin-left: 250px;
+        }
+
+        main {
+            margin-left: 250px;
+        }
+
+        /* Make header title smaller to fit better */
+        header h1 {
+            font-size: 1.5rem;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            nav {
+                position: static;
+                width: 100%;
+                height: auto;
+            }
+            
+            header, main {
+                margin-left: 0;
+            }
+        }
+
+        /* Card and Graph Styles */
+        .dashboard-card {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(229, 231, 235, 1);
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-title {
+            color: #1e40af;
             font-size: 0.875rem;
-            color: #555;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
-        .gradient-highlight {
-            background: blanchedalmond;
-            color: #fff;
-            border-radius: 0.5rem;
-            padding: 0.5rem 1rem;
+        .card-value {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: #1d4ed8;
+            margin: 0.5rem 0;
+        }
+
+        .card-icon {
+            background-color: #dbeafe;
+            padding: 1rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-icon svg {
+            color: #1d4ed8;
+        }
+
+        .card-trend {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .trend-up {
+            color: #059669;
+        }
+
+        .trend-down {
+            color: #dc2626;
+        }
+
+        .graph-container {
+            padding: 1.5rem;
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(229, 231, 235, 1);
+        }
+
+        .graph-title {
+            color: #1e40af;
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        canvas {
+            margin: 1rem 0;
+        }
+
+        /* Scrollbar Styles */
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+
+        /* Hide scrollbar for Firefox */
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: #94a3b8 transparent;
+        }
+
+        /* Hide scrollbar when not hovering */
+        nav {
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE and Edge */
+        }
+
+        nav::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Opera */
+        }
+
+        nav:hover {
+            scrollbar-width: thin;
+            -ms-overflow-style: auto;
+        }
+
+        nav:hover::-webkit-scrollbar {
+            display: block;
+        }
+
+        /* Main content scrollbar */
+        main {
+            overflow-y: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        main::-webkit-scrollbar {
+            display: none;
+        }
+
+        main:hover {
+            scrollbar-width: thin;
+            -ms-overflow-style: auto;
+        }
+
+        main:hover::-webkit-scrollbar {
+            display: block;
         }
     </style>
 </head>
 
-<body>
-    <header class="header flex justify-between items-center">
-        <h1 class="text-xl font-semibold">Tableau de Bord - CHNDLM S.A</h1>
-        <div class="flex items-center gap-4">
-            <input type="text" placeholder="Rechercher..." class="border rounded-lg px-3 py-2">
-            <div class="flex gap-2 items-center">
-                <span class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">🔔</span>
-                <span class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">⚙️</span>
-                <img src="profile.jpg" alt="Profil" class="w-8 h-8 rounded-full">
-            </div>
+<body class="bg-gray-100">
+    <nav class="bg-blue-200 text-black shadow-lg fixed left-0 top-0 h-full w-64 overflow-y-auto z-50">
+        <div class="p-2">
+           <div class="nav-title">
+               <h1 class="text-2xl">📊 Tableau de Bord</h1>
+           </div>
+           <div class="flex flex-col">
+               <a href="ajout.html" class="nav-link">➕ Ajout de produits</a>
+               <a href="jesyon.html" class="nav-link">💼 Gestion des Ventes</a>
+               <a href="estimation.html" class="nav-link">📈 Estimation totale des stocks</a>
+               <a href="perime.html" class="nav-link">⚠️ Produits Périmés</a>
+               <a href="notif.html" class="nav-link">🔔 Quantités insuffisantes</a>
+               <a href="sent.html" class="nav-link">📤 Rapports de transferts</a>
+               <a href="received.html" class="nav-link">📥 Rapports de réceptions</a>
+               <a href="report.html" class="nav-link">📊 Rapports de ventes</a>
+               <a href="perfil.html" class="nav-link">👤 Profil</a>
+               <a href="index.html" class="nav-link logout">🚪 Déconnexion</a>
+           </div>
         </div>
-    </header>
+    </nav>
 
-    <div class="flex">
-        <!-- Sidebar -->
-        <nav class="sidebar w-64 h-screen p-4">
-            <a href="ajout.html" class="active"><span>➕</span> Ajout de Produits</a>
-            <a href="jesyon.html"><span>📊</span> Gestion des Ventes</a>
-            <a href="estimation.html"><span>📦</span> Estimation des Stocks</a>
-            <a href="perime.html"><span>⚠️</span> Produits Périmés</a>
-            <a href="notif.html"><span>🔔</span> Quantités Insuffisantes</a>
-            <a href="sent.html"><span>🚛</span> Rapports de Transferts</a>
-            <a href="received.html"><span>📥</span> Rapports de Réceptions</a>
-            <a href="report.html"><span>📄</span> Rapports de Ventes</a>
-            <a href="perfil.html"><span>👤</span> Profil</a>
-            <a href="index.html"><span>🚪</span> Déconnexion</a>
-        </nav>
-
-        <!-- Main Content -->
-        <main class="flex-1 p-4">
-            <!-- Stats Cards -->
-            <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div class="card">
-                    <h3 class="text-lg font-semibold">Stock Total Disponible</h3>
-                    <p class="text-4xl font-bold" id="total-stock-count">0</p>
-                    <p class="text-sm text-gray-500">+3.5% vs mois dernier</p>
+    <div class="ml-64">
+        
+        <main class="container mx-auto px-4 mt-8">
+            <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                <!-- Card: Total Stock -->
+                <div class="dashboard-card p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="card-title">Stock Total Disponible</h3>
+                            <p class="card-value" id="total-stock-count">0</p>
+                            <div class="card-trend">
+                                <span class="trend-up">+3.5%</span>
+                                <span class="text-gray-500">vs mois dernier</span>
+                            </div>
+                        </div>
+                        <div class="card-icon">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                            </svg>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="card">
-                    <h3 class="text-lg font-semibold">Transferts (30 derniers jours)</h3>
-                    <p class="text-4xl font-bold" id="transfers-count">152</p>
+                <!-- Card: Transferred Items -->
+                <div class="dashboard-card p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="card-title">Transferts</h3>
+                            <p class="card-value" id="transfers-count">0</p>
+                            <div class="card-trend">
+                                <span class="text-blue-600">152 articles</span>
+                                <span class="text-gray-500">transférés</span>
+                            </div>
+                        </div>
+                        <div class="card-icon">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+                            </svg>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="card">
-                    <h3 class="text-lg font-semibold">Réceptions (30 derniers jours)</h3>
-                    <p class="text-4xl font-bold" id="received-count">234</p>
+                <!-- Card: Received Items -->
+                <div class="dashboard-card p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="card-title">Réceptions</h3>
+                            <p class="card-value" id="received-count">0</p>
+                            <div class="card-trend">
+                                <span class="text-blue-600">234 articles</span>
+                                <span class="text-gray-500">reçus</span>
+                            </div>
+                        </div>
+                        <div class="card-icon">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                            </svg>
+                        </div>
+                    </div>
                 </div>
             </section>
 
-            <!-- Charts -->
-            <section class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                <div class="chart-container">
-                    <h3 class="text-lg font-semibold">Mouvements de Stock</h3>
-                    <canvas id="stockMovementChart"></canvas>
+            <!-- Charts Section -->
+            <section class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <!-- Stock Movement Chart -->
+                <div class="graph-container">
+                    <h3 class="graph-title">Mouvements de Stock</h3>
+                    <canvas id="stockMovementChart" height="300"></canvas>
                 </div>
 
-                <div class="chart-container">
-                    <h3 class="text-lg font-semibold">Distribution par Catégorie</h3>
-                    <canvas id="categoryDistributionChart"></canvas>
+                <!-- Category Distribution Chart -->
+                <div class="graph-container">
+                    <h3 class="graph-title">Distribution par Catégorie</h3>
+                    <canvas id="categoryDistributionChart" height="300"></canvas>
+                </div>
+            </section>
+
+            <!-- Quantity Charts Section -->
+            <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Transferred Quantity -->
+                <div class="graph-container">
+                    <h3 class="graph-title">Quantitée totale transferée</h3>
+                    <canvas id="transferred-quantity" height="300"></canvas>
+                    <div class="mt-4 text-sm">
+                        <span id="transferred-percentual" class="font-semibold text-blue-600"></span>
+                        <span class="text-gray-500"> vs mois dernier</span>
+                    </div>
+                </div>
+
+                <!-- Received Quantity -->
+                <div class="graph-container">
+                    <h3 class="graph-title">Quantitée totale reçue</h3>
+                    <canvas id="received-quantity" height="300"></canvas>
+                    <div class="mt-4 text-sm">
+                        <span id="received-percentual" class="font-semibold text-blue-600"></span>
+                        <span class="text-gray-500"> vs mois dernier</span>
+                    </div>
                 </div>
             </section>
         </main>
     </div>
 
-    <footer class="footer">
-        &copy; 2024 CHNDLM S.A - Tous droits réservés.
-    </footer>
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/db.js" type="module"></script>
+    <script src="js/dashboard/index.js"></script>
+    <script src="js/dashboard/graphs.js" type="module"></script>
     <script>
-        // Example Chart.js initialization
-        const ctx1 = document.getElementById('stockMovementChart').getContext('2d');
-        new Chart(ctx1, {
-            type: 'line',
-            data: {
-                labels: ['Jan', 'Fév', 'Mars', 'Avr', 'Mai'],
-                datasets: [{
-                    label: 'Mouvements',
-                    data: [50, 60, 70, 80, 90],
-                    borderColor: '#7e5bef',
-                    backgroundColor: 'rgba(126, 91, 239, 0.1)',
-                    tension: 0.4,
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: { display: false },
+        // Handle active state for navigation links
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPath = window.location.pathname;
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === currentPath.split('/').pop()) {
+                    link.classList.add('active');
                 }
+            });
+
+            // Mobile menu toggle
+            const menuToggle = document.getElementById('menu-toggle');
+            const nav = document.querySelector('nav');
+            
+            if (menuToggle) {
+                menuToggle.addEventListener('click', () => {
+                    nav.classList.toggle('active');
+                });
             }
         });
     </script>
