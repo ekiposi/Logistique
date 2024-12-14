@@ -77,6 +77,13 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const showMedicationForm = (index = -1) => {
+        // Make other forms hidden if they are open
+        const isEquipmentFormHidden = elements.equipmentFormContainer.classList.contains('hidden')
+        if(!isEquipmentFormHidden) elements.equipmentFormContainer.classList.toggle('hidden')
+
+        const isDeviceFormHidden = elements.medicationFormContainer.classList.contains('hidden')
+        if(!isDeviceFormHidden) elements.medicationFormContainer.classList.toggle('hidden')
+
         const formTitle = document.getElementById("form-title");
         
         if (index === -1) {
@@ -361,7 +368,6 @@ document.addEventListener('DOMContentLoaded', () => {
         renderEquipmentTable();
     };
 
-    window.showMedicationForm = showMedicationForm;
     window.deleteMedication = deleteMedication;
 
     // Initialize charts when DOM is loaded
@@ -428,7 +434,14 @@ document.addEventListener('DOMContentLoaded', () => {
         // document.getElementById('received-count').textContent = getReceivedCount();
     }
 
-    window.showDeviceForm = (index = -1) => {
+    const showDeviceForm = (index = -1) => {
+        // Make other forms hidden if they are open
+        const isMedicationFormHidden = elements.medicationFormContainer.classList.contains('hidden')
+        if(!isMedicationFormHidden) elements.medicationFormContainer.classList.toggle('hidden')
+
+        const isEquipmentFormHidden = elements.equipmentFormContainer.classList.contains('hidden')
+        if(!isEquipmentFormHidden) elements.equipmentFormContainer.classList.toggle('hidden')
+
         // Toggle visibility
         elements.deviceFormContainer.classList.toggle("hidden");
         
@@ -459,6 +472,13 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const showEquipmentForm = (index = -1) => {
+        // Make other forms hidden if they are open
+        const isMedicationFormHidden = elements.medicationFormContainer.classList.contains('hidden')
+        if(!isMedicationFormHidden) elements.medicationFormContainer.classList.toggle('hidden')
+
+        const isDeviceFormHidden = elements.medicationFormContainer.classList.contains('hidden')
+        if(!isDeviceFormHidden) elements.medicationFormContainer.classList.toggle('hidden')
+
         // Toggle visibility
         elements.equipmentFormContainer.classList.toggle("hidden");
         
