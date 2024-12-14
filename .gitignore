@@ -1,5 +1,9 @@
 node_modules/
+<<<<<<< HEAD
 notes.md
 *.zip
 *.tar.gz
 *.rar
+=======
+notes.md
+>>>>>>> 0ed9499a2af5648586dea5ca2f414cc885591eee

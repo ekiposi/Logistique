@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { addProductStock, updateMedications, getEquipments, getDevices, getDataFromStorage, getProductsStock } from '../db.js'
 import { formatDate } from '../utils.js'
 import { renderTable } from './table.js'
@@ -12,6 +13,52 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Selected product in select input
   let products = getDataFromStorage(productType)
+=======
+import { addProductStock, updateMedications, getDataFromStorage, getProductsStock } from '../db.js'
+import { renderTable } from './table.js'
+const { isBefore } = window.dateFns
+
+var productType = 'medications'
+var products = getDataFromStorage(productType)
+
+const productSelect = document.querySelector('#product')
+
+const removeProductsList = () => {
+  productSelect.innerHTML = '<option value="">Sélectionnez un produit</option>'
+}
+
+const listProducts = () => {
+  removeProductsList()
+
+  products.map((product) => {
+    const optionElement = document.createElement('option')
+    optionElement.value = product.name
+    optionElement.textContent = product.name
+
+    productSelect.append(optionElement)
+  })
+}
+
+const onProductTypeChange = (elementId) => {
+  const productTypeValue = document.querySelector(elementId).value
+  if(!productTypeValue) return
+
+  // Update global productType global var
+  productType = productTypeValue
+  products = getDataFromStorage(productTypeValue)
+
+
+  const currentStockElement = document.querySelector('#current-stock')
+  currentStockElement.textContent = 
+
+  listProducts()
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const medications = JSON.parse(localStorage.getItem('medications')) || []
+  
+  // Selected product in select input
+>>>>>>> 0ed9499a2af5648586dea5ca2f414cc885591eee
   let selectedProduct = {}
 
   const addProductReceived = (e) => {
@@ -60,11 +107,49 @@ document.addEventListener('DOMContentLoaded', () => {
     // Add to local storage
     addProductStock(data)
 
+<<<<<<< HEAD
     const updatedStock = getProductsStock()
     renderTable(updatedStock)
     window.alert('Receive created!')
   }
 
+=======
+    renderTable()
+    window.alert('Receive created!')
+  }
+
+  const editProduct = () => {
+    const fields = [
+      { id: 'type', value: '#product-type-edit'},
+      { id: 'productName', value: '#product-edit' },
+      { id: 'receptionDate', value: '#reception-date-edit' },
+      { id: 'information', value: '#extra-information-edit' },
+      { id: 'newQuantity', value: '#new-quantity-edit'},
+      { id: 'role', value: '#fonction-edit'},
+      { id: 'supplier', value: '#supplier-info-edit'}
+    ]
+    const fieldsValues = fields.reduce((acc, item) => {
+      const value = document.querySelector(item.value).value
+      acc[item.id] = value
+      return acc
+    }, {})
+  
+    const data = {
+      id: Math.floor(Math.random() * 1000000),
+      type: fieldsValues.type,
+      productId: fieldsValues.productName,
+      quantityAdded: Number(newQuantity),
+      newQuantity: Number(newQuantity) + selectedProduct.quantity,
+      supplier: supplierName,
+      role,
+      information,
+      previousQuantity: selectedProduct.quantity,
+      receptionDate,
+      createdAt: new Date(),
+    }
+  }
+
+>>>>>>> 0ed9499a2af5648586dea5ca2f414cc885591eee
   const updateProductQuantity = (name, newQuantity) => {
     // Check if product exists
     const updatedProductsList = medications.map((med) => {
@@ -86,6 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return true
   }
 
+<<<<<<< HEAD
   const removeProductsList = () => {
     productSelect.innerHTML = '<option value="">Sélectionnez un produit</option>'
   }
@@ -116,6 +202,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     listProducts()
   }
+=======
+
+>>>>>>> 0ed9499a2af5648586dea5ca2f414cc885591eee
 
   const onProductSelect = (e) => {
     const currentStockElement = document.querySelector('#current-stock')
@@ -137,8 +226,55 @@ document.addEventListener('DOMContentLoaded', () => {
   productSelect.addEventListener('change', onProductSelect)
 
   const typeInput = document.querySelector('#product-type')
+<<<<<<< HEAD
   typeInput.addEventListener('change', (e) => onProductTypeChange(e))
 
   const addReceivedQuantity = document.querySelector('#add-quantity-form')
   addReceivedQuantity.addEventListener('submit', addProductReceived)
 })
+=======
+  typeInput.addEventListener('change', (e) => onProductTypeChange('#product-type'))
+
+  const addReceivedQuantity = document.querySelector('#add-quantity-form')
+  addReceivedQuantity.addEventListener('submit', addProductReceived)
+})
+
+const showReceivedForm = (index) => {
+  listProducts()
+
+  const formContainer = document.querySelector(`#received-form`)
+  formContainer.classList.toggle('hidden')
+
+  const fields = [
+    { id: 'type', value: '#product-type-edit'},
+    { id: 'productId', value: '#product-edit' },
+    { id: 'receptionDate', value: '#reception-date-edit' },
+    { id: 'information', value: '#extra-information-edit' },
+    { id: 'newQuantity', value: '#new-quantity-edit'},
+    { id: 'role', value: '#fonction-edit'},
+    { id: 'supplier', value: '#supplier-info-edit'}
+  ]
+
+  const receivedProducts = getProductsStock()
+  const product = receivedProducts[index] 
+
+  // Set input values
+  fields.forEach((item) => {
+    const element = document.querySelector(item.value)
+    if (item.id === 'type' || item.id === 'productId') {
+      element.value = product[item.id]
+      return
+    }
+
+
+    element.value = product[item.id] || ''
+    element.textContent = product[item.id] || ''
+  })
+}
+
+window.showReceivedForm = showReceivedForm
+
+// Edit event listeners
+const editTypeInput = document.querySelector('#edit-product-type')
+editTypeInput.addEventListener('change', (e) => onProductTypeChange('#edit-product-type'))
+>>>>>>> 0ed9499a2af5648586dea5ca2f414cc885591eee

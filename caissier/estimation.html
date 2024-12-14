@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estimation totale des stocks - CHNDLM S.A</title>
+    <script src="js/jspdf.umd.min.js"></script>
+    <script src="js/jspdf.plugin.autotable.min.js"></script>
+    <script src="../js/pdf/formatPdf.js"></script>
+    <link rel="stylesheet" href="css/output.css">
+    <link href="fonts/LexendDecaRegular.ttf" rel="stylesheet">    <link rel="stylesheet" href="css/dashstyle.css">
+    <style>
+   
+    @font-face {
+        font-family: 'LexendDeca';
+        src: url('fonts/LexendDecaRegular.ttf') format('truetype');
+        font-weight: normal;
+        font-style: normal;
+    }
+
+    body {
+        font-family: 'LexendDeca', sans-serif;
+    }
+
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 16px;
+            text-align: left;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100">
+    <header class="bg-green-200 text-black p-6 shadow-lg">
+        <div class="container mx-auto flex flex-col md:flex-row justify-between items-center">
+            <h1 class="text-3xl font-bold mb-4 md:mb-0">Estimation totale des stocks - CHNDLM S.A - Pharma</h1>
+            <nav class="flex space-x-4">
+                <a href="jesyon.html" class="text-lg hover:text-green-600">Gestion des Ventes</a>
+                <a href="perime.html" class="text-lg hover:text-green-600">Médicaments Périmés</a>
+                <a href="notif.html" class="text-lg hover:text-green-600">Quantités insuffisantes</a>
+                <a href="report.html" class="text-lg hover:text-green-600">Rapports de ventes</a>
+                <a href="profile.html" class="text-lg hover:text-green-600">Profil</a>
+                <a href="index.html" class="text-lg text-red-600 hover:text-red-800">Déconnexion</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container mx-auto mt-10 mb-8 p-6 bg-white rounded-lg shadow-md">
+        <div class="search-container flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
+            <input type="text" id="search-bar" placeholder="Rechercher un médicament" class="w-full md:w-1/3 border border-gray-300 rounded-full p-2 shadow-sm">
+            <select id="category-filter" class="w-full md:w-1/3 border border-gray-300 rounded-full p-2 shadow-sm">
+                <option value="">Toutes les catégories</option>
+            </select>
+            <button id="pdf-download" class="bg-green-400 hover:bg-green-500 text-white font-bold py-2 px-4 rounded-full shadow-md">Télécharger en PDF</button>
+        </div>
+    </div>
+
+    <div class="container mx-auto mb-8 p-6 bg-white rounded-lg shadow-md">
+        <table class="min-w-full bg-white">
+            <thead>
+                <tr class="bg-green-300 text-black">
+                    <th class="py-3 px-6 text-center border-b border-gray-300">Nom du Médicament</th>
+                    <th class="py-3 px-6 text-center border-b border-gray-300">Quantité en Stock</th>
+                    <th class="py-3 px-6 text-center border-b border-gray-300">Prix Unitaire</th>
+                    <th class="py-3 px-6 text-center border-b border-gray-300">Valeur Totale en Stock</th>
+                </tr>
+            </thead>
+            <tbody id="medication-list" class="text-black">
+                <!-- Medications will be dynamically populated here -->
+            </tbody>
+            <tfoot>
+                <tr class="bg-green-200 text-black font-bold">
+                    <td colspan="3" class="py-3 px-6 text-center border-b border-gray-300">Total des Valeurs en Stock:</td>
+                    <td id="total-stock-value" class="py-3 px-6 text-center border-b border-gray-300">0 GDES</td>
+                </tr>
+            </tfoot>
+        </table>
+    
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const medicationList = document.getElementById('medication-list');
+            const totalStockValueCell = document.getElementById('total-stock-value');
+            const searchBar = document.getElementById('search-bar');
+            const categoryFilter = document.getElementById('category-filter');
+            const pdfDownloadBtn = document.getElementById('pdf-download');
+            const formatCurrency = (value) => {
+                return new Intl.NumberFormat('fr-FR', {
+                    style: 'currency',
+                    currency: 'HTG'
+                }).format(value);
+            };
+            const loadMedications = () => {
+                const storedMedications = JSON.parse(localStorage.getItem('medications') || '[]');
+                const activeMedications = storedMedications.filter(med => !med.isExpired);
+                const categories = [...new Set(activeMedications.map(med => med.category))];
+                categoryFilter.innerHTML = `
+                    <option value="">Toutes les catégories</option>
+                    ${categories.map(cat => `<option value="${cat}">${cat}</option>`).join('')}
+                `;
+
+                return activeMedications;
+            };
+            const renderMedicationList = (medications) => {
+                let totalStockValue = 0;
+                const listHTML = medications.map(med => {
+                    const stockValue = med.quantity * parseFloat(med.price);
+                    totalStockValue += stockValue;
+
+                    return `
+                        <tr>
+                            <td>${med.name}</td>
+                            <td>${med.quantity}</td>
+                            <td>${formatCurrency(parseFloat(med.price))}</td>
+                            <td>${formatCurrency(stockValue)}</td>
+                        </tr>
+                    `;
+                }).join('');
+
+                medicationList.innerHTML = listHTML;
+                totalStockValueCell.textContent = formatCurrency(totalStockValue);
+            };
+            const filterMedications = () => {
+                const medications = loadMedications();
+                const searchTerm = searchBar.value.toLowerCase();
+                const categoryTerm = categoryFilter.value;
+
+                const filteredMedications = medications.filter(med => 
+                    med.name.toLowerCase().includes(searchTerm) &&
+                    (!categoryTerm || med.category === categoryTerm)
+                );
+
+                renderMedicationList(filteredMedications);
+            };
+            const generatePDF = () => {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+
+                getHeaderPdf(doc, 'Estimation Totale des Stocks')
+
+                const medications = loadMedications();
+                const tableColumn = ["Nom", "Quantité", "Prix Unitaire", "Valeur Stock"];
+                const tableRows = medications.map(med => [
+                    med.name, 
+                    med.quantity.toString(), 
+                    formatCurrency(parseFloat(med.price)),
+                    formatCurrency(med.quantity * parseFloat(med.price))
+                ]);
+                doc.autoTable({
+                    head: [tableColumn],
+                    body: tableRows,
+                    startY: 60,
+                    theme: 'striped'
+                });
+                const totalValue = medications.reduce((sum, med) => sum + (med.quantity * parseFloat(med.price)), 0);
+                doc.text(`Total des Valeurs en Stock: ${formatCurrency(totalValue)}`, 14, doc.autoTable.previous.finalY + 10);
+                getFootPdf(doc)
+                doc.save('estimation_stocks.pdf');
+            };
+
+            searchBar.addEventListener('input', filterMedications);
+            categoryFilter.addEventListener('change', filterMedications);
+            pdfDownloadBtn.addEventListener('click', generatePDF);
+            const initialMedications = loadMedications();
+            renderMedicationList(initialMedications);
+        });
+    </script>
+</body>
+</html>

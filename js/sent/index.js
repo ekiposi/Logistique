@@ -21,9 +21,12 @@ document.addEventListener('DOMContentLoaded', () => {
       return acc
     }, {})
 
+<<<<<<< HEAD
     // Get current stock before update
     const currentStock = document.getElementById('current-stock').value
 
+=======
+>>>>>>> 0ed9499a2af5648586dea5ca2f414cc885591eee
     // Update product quantity
     const isConcluded = updateProductQuantity(fieldsValues.productName, Number(fieldsValues.transferQuantity))
     if(!isConcluded) return
@@ -35,7 +38,10 @@ document.addEventListener('DOMContentLoaded', () => {
       quantityTransferred: Number(fieldsValues.transferQuantity),
       reason: fieldsValues.reason,
       createdAt: new Date(),
+<<<<<<< HEAD
       previousQuantity: Number(currentStock)
+=======
+>>>>>>> 0ed9499a2af5648586dea5ca2f414cc885591eee
     }
 
     addProductTransferred(data)
@@ -75,6 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let productType = 'medications'
   let products = getDataFromStorage(productType)
 
+<<<<<<< HEAD
   const getProductTypeKey = (value) => {
     switch(value) {
       case 'medicament':
@@ -113,6 +120,20 @@ document.addEventListener('DOMContentLoaded', () => {
     currentStockElement.value = ''
     
     // Update product list
+=======
+  const onProductTypeChange = () => {
+    const productTypeValue = document.querySelector('#product-type').value
+    if(!productTypeValue) return
+
+    // Update global productType global var
+    productType = productTypeValue
+    products = getDataFromStorage(productTypeValue)
+
+
+    const currentStockElement = document.querySelector('#current-stock')
+    currentStockElement.textContent = 
+
+>>>>>>> 0ed9499a2af5648586dea5ca2f414cc885591eee
     listProducts()
   }
 
@@ -166,6 +187,20 @@ document.addEventListener('DOMContentLoaded', () => {
     window.alert('Transfer created!')
   }
 
+<<<<<<< HEAD
+=======
+  const listProducts = () => {
+    // removeProductsList()
+
+    products.map((product) => {
+      const optionElement = document.createElement('option')
+      optionElement.value = product.name
+      optionElement.textContent = product.name
+
+      productSelect.append(optionElement)
+    })
+  }
+>>>>>>> 0ed9499a2af5648586dea5ca2f414cc885591eee
   let selectedProduct = {}
   const onProductSelect = (e) => {
     const currentStockElement = document.querySelector('#current-stock')
@@ -189,9 +224,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const typeInput = document.querySelector('#report-product-type')
   typeInput.addEventListener('change', (e) => onProductTypeChange(e))
 
+<<<<<<< HEAD
   const productTypeSelect = document.querySelector('#product-type')
   productTypeSelect.addEventListener('change', onProductTypeChange)
 
   const transferQuantityForm = document.querySelector('#transfer-quantity-form')
   transferQuantityForm.addEventListener('submit', createTransfer)
+=======
+  const transferQuantityForm = document.querySelector('#transfer-quantity-form')
+  transferQuantityForm.addEventListener('submit', createTransfer)
+
+
+  const addReceivedQuantity = document.querySelector('#transfer-quantity-form')
+  addReceivedQuantity.addEventListener('submit', addProductReceived)
+>>>>>>> 0ed9499a2af5648586dea5ca2f414cc885591eee
 })

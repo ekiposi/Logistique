@@ -292,10 +292,17 @@
                   Quantité Initiale
                 </th>
                 <th class="py-3 px-6 text-center border-b border-gray-300">
+<<<<<<< HEAD
                   Quantité Totale Transferrée
                 </th>
                 <th class="py-3 px-6 text-center border-b border-gray-300">
                   Quantité restante
+=======
+                  Quantité Totale Reçue
+                </th>
+                <th class="py-3 px-6 text-center border-b border-gray-300">
+                  Quantité Transférée
+>>>>>>> 0ed9499a2af5648586dea5ca2f414cc885591eee
                 </th>
                 <th class="py-3 px-6 text-center border-b border-gray-300">
                   Action
@@ -317,6 +324,7 @@
       function generatePDFReport() {
         const dataStart = document.getElementById("start-date").value;
         const dataEnd = document.getElementById("end-date").value;
+<<<<<<< HEAD
         const productType = document.getElementById("report-product-type").value;
 
         // Get all transferred items from the table
@@ -364,6 +372,38 @@
         
         formatPdf(
           "Rapport des Transferts de Stock",
+=======
+        const productType = document.getElementById("product-type").value;
+
+        const selectElement = document.getElementById("report-product-type");
+
+        selectElement.addEventListener("change", function () {
+          const selectedValue = selectElement.value;
+          document.getElementById("selected-value").textContent =
+            selectedValue || "Tous les produits";
+        });
+
+        description = `- date de début: ${dataStart} | date de fin: ${dataEnd} | type de produit: ${productType}`;
+
+        autoTable = {
+          head: [
+            [
+              "Produit",
+              "Quantité Initiale",
+              "Quantité Transférée",
+              "Nouvelle Quantité",
+            ],
+          ],
+          body: [
+            // Exemple de données, remplacez par des données dynamiques
+            ["Produit A", "50", "5", "45"],
+            ["Produit B", "30", "10", "20"],
+          ],
+          margin: { top: 100 },
+        };
+        formatPdf(
+          "Estimation Totale des Stocks",
+>>>>>>> 0ed9499a2af5648586dea5ca2f414cc885591eee
           description,
           autoTable,
           "rapport_transfert.pdf"

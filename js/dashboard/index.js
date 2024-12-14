@@ -1,9 +1,14 @@
+<<<<<<< HEAD
 import { addEquipment, getMedications, getDevices, getEquipments, updateEquipments, addDevice, updateMedications, updateDevices } from '../db.js'
+=======
+import { addEquipment, getMedications, getDevices, getEquipments, updateEquipments, addDevice } from '../db.js'
+>>>>>>> 0ed9499a2af5648586dea5ca2f414cc885591eee
 import { formatDate } from '../utils.js'
 
 document.addEventListener('DOMContentLoaded', () => {
     const { isBefore } = window.dateFns
 
+<<<<<<< HEAD
     // Initialize global variables
     let medications = [];
     let devices = [];
@@ -17,6 +22,12 @@ document.addEventListener('DOMContentLoaded', () => {
         equipments = getEquipments();
     };
     loadInitialData();
+=======
+    let medications = getMedications()
+    let devices = getDevices()
+    let equipments = getEquipments()
+    let editingIndex = -1;
+>>>>>>> 0ed9499a2af5648586dea5ca2f414cc885591eee
 
     const elements = {
         medicationForm: document.getElementById("add-medication-form"),
@@ -255,8 +266,40 @@ document.addEventListener('DOMContentLoaded', () => {
     const setupEventListeners = () => {
         elements.addMedicationBtn.addEventListener("click", () => showMedicationForm());
         
+<<<<<<< HEAD
         elements.medicationForm.addEventListener("submit", handleMedicationSubmit);
         
+=======
+        elements.medicationForm.addEventListener("submit", (event) => {
+            event.preventDefault();
+
+            const expirationDate = document.getElementById("med-expirationDate").value
+            const isBeforeToday = isBefore(new Date(expirationDate), new Date())
+
+            if (isBeforeToday) {
+                window.alert("Medicine is expired, can't update the product")
+                return
+            }
+            
+            const medication = {
+                name: document.getElementById("med-name").value,
+                quantity: Number(document.getElementById("med-quantity").value),
+                price: Number(document.getElementById("med-price").value),
+                expirationDate: document.getElementById("med-expirationDate").value,
+                category: document.getElementById("med-category").value,
+                createdAt: formatDate(new Date()),
+                type: 'medications'
+            };
+
+            if (Object.values(medication).some(val => !val)) {
+                alert("Tous les champs sont obligatoires !");
+                return;
+            }
+
+            addMedication(medication);
+        });
+
+>>>>>>> 0ed9499a2af5648586dea5ca2f414cc885591eee
         const filters = [
             elements.searchBar,
             elements.categoryFilter,
@@ -270,6 +313,11 @@ document.addEventListener('DOMContentLoaded', () => {
             );
         });
 
+<<<<<<< HEAD
+=======
+        
+
+>>>>>>> 0ed9499a2af5648586dea5ca2f414cc885591eee
         elements.addDeviceBtn.addEventListener("click", () => showDeviceForm());
         elements.deviceForm.addEventListener("submit", handleDeviceSubmit);
         
@@ -421,6 +469,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const isEquipmentFormHidden = elements.equipmentFormContainer.classList.contains('hidden')
         if(!isEquipmentFormHidden) elements.equipmentFormContainer.classList.toggle('hidden')
 
+<<<<<<< HEAD
+=======
+        // Toggle visibility
+        elements.deviceFormContainer.classList.toggle("hidden");
+        
+        // If already visible, hide and return
+        if (elements.deviceFormContainer.classList.contains("hidden")) {
+            return;
+        }
+
+>>>>>>> 0ed9499a2af5648586dea5ca2f414cc885591eee
         const formTitle = document.getElementById("device-form-title");
         
         if (index === -1) {
@@ -433,6 +492,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             formTitle.innerText = "Modifier un appareil médical";
             const device = devices[index];
+<<<<<<< HEAD
             
             ['device-name', 'device-quantity', 'device-date', 'device-function', 'device-type', 'device-info']
                 .forEach(id => {
@@ -445,6 +505,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         elements.deviceFormContainer.classList.toggle("hidden");
+=======
+            document.getElementById("device-name").value = device.name || '';
+            document.getElementById("device-quantity").value = device.quantity || '';
+            document.getElementById("device-date").value = device.createdAt || new Date().toISOString().split('T')[0];
+            document.getElementById("device-function").value = device.role || '';
+            document.getElementById("device-type").value = device.type || '';
+            document.getElementById("device-info").value = device.additionalInfo || '';
+            editingIndex = index;
+        }
+>>>>>>> 0ed9499a2af5648586dea5ca2f414cc885591eee
     };
 
     const showEquipmentForm = (index = -1) => {
@@ -452,8 +522,21 @@ document.addEventListener('DOMContentLoaded', () => {
         const isMedicationFormHidden = elements.medicationFormContainer.classList.contains('hidden')
         if(!isMedicationFormHidden) elements.medicationFormContainer.classList.toggle('hidden')
 
+<<<<<<< HEAD
         const isDeviceFormHidden = elements.deviceFormContainer.classList.contains('hidden')
         if(!isDeviceFormHidden) elements.deviceFormContainer.classList.toggle('hidden')
+=======
+        const isDeviceFormHidden = elements.medicationFormContainer.classList.contains('hidden')
+        if(!isDeviceFormHidden) elements.medicationFormContainer.classList.toggle('hidden')
+
+        // Toggle visibility
+        elements.equipmentFormContainer.classList.toggle("hidden");
+        
+        // If already visible, hide and return
+        if (elements.equipmentFormContainer.classList.contains("hidden")) {
+            return;
+        }
+>>>>>>> 0ed9499a2af5648586dea5ca2f414cc885591eee
 
         const formTitle = document.getElementById("equipment-form-title");
         
@@ -466,6 +549,7 @@ document.addEventListener('DOMContentLoaded', () => {
             editingIndex = -1;
         } else {
             formTitle.innerText = "Modifier un équipement médical";
+<<<<<<< HEAD
             const equipment = equipments[index];
             
             ['equip-name', 'equip-quantity', 'equip-date', 'equip-function', 'equip-type', 'equip-info']
@@ -479,16 +563,32 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         elements.equipmentFormContainer.classList.toggle("hidden");
+=======
+            const equip = equipments[index];
+            document.getElementById("equip-name").value = equip.name || '';
+            document.getElementById("equip-quantity").value = equip.quantity || '';
+            document.getElementById("equip-date").value = equip.createdAt || new Date().toISOString().split('T')[0];
+            document.getElementById("equip-function").value = equip.role || '';
+            document.getElementById("equip-type").value = equip.type || '';
+            document.getElementById("equip-info").value = equip.additionalInfo || '';
+            editingIndex = index;
+        }
+>>>>>>> 0ed9499a2af5648586dea5ca2f414cc885591eee
     };
 
     const handleDeviceSubmit = (event) => {
         event.preventDefault();
+<<<<<<< HEAD
 
+=======
+        
+>>>>>>> 0ed9499a2af5648586dea5ca2f414cc885591eee
         const device = {
             name: document.getElementById("device-name").value,
             quantity: Number(document.getElementById("device-quantity").value),
             createdAt: document.getElementById("device-date").value,
             role: document.getElementById("device-function").value,
+<<<<<<< HEAD
             type: document.getElementById("device-type").value,
             additionalInfo: document.getElementById("device-info").value || ''
         };
@@ -587,10 +687,23 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         if (Object.values(medication).some(val => !val)) {
+=======
+            additionalInfo: document.getElementById("device-info").value,
+            type: document.getElementById('device-type').value,
+            price: document.getElementById('device-price').value
+        };
+
+        // Check if any required field is empty
+        const requiredFields = ["name", "quantity", "createdAt", "role", "price", "type"];
+        const missingFields = requiredFields.filter(field => !device[field]);
+        
+        if (missingFields.length > 0) {
+>>>>>>> 0ed9499a2af5648586dea5ca2f414cc885591eee
             alert("Tous les champs sont obligatoires !");
             return;
         }
 
+<<<<<<< HEAD
         if (editingIndex !== -1) {
             // Update existing medication
             medications[editingIndex] = medication;
@@ -605,6 +718,40 @@ document.addEventListener('DOMContentLoaded', () => {
         elements.medicationForm.reset();
         elements.medicationFormContainer.classList.add("hidden");
         renderFilteredTable();
+=======
+        addDevice(device)
+
+        renderDeviceTable();
+        elements.deviceFormContainer.classList.add("hidden");
+    };
+
+    const handleEquipmentSubmit = (event) => {
+        event.preventDefault();
+        
+        const equipment = {
+            name: document.getElementById("equip-name").value,
+            quantity: Number(document.getElementById("equip-quantity").value),
+            createdAt: document.getElementById("equip-date").value,
+            price: Number(document.getElementById("equip-price").value),
+            role: document.getElementById("equip-function").value,
+            type: document.getElementById("equip-type").value,
+            additionalInfo: document.getElementById("equip-info").value,
+        };
+
+        // Check if any required field is empty
+        const requiredFields = ["name", "quantity", "createdAt", "role", "type", "price"];
+        const missingFields = requiredFields.filter(field => !equipment[field]);
+        
+        if (missingFields.length > 0) {
+            alert("Tous les champs sont obligatoires !");
+            return;
+        }
+
+        addEquipment(equipment)
+        renderEquipmentTable();
+        
+        elements.equipmentFormContainer.classList.add("hidden");
+>>>>>>> 0ed9499a2af5648586dea5ca2f414cc885591eee
     };
 
     const renderDeviceTable = () => {
@@ -734,6 +881,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const doc = new jsPDF();
 
         // Create table data manually
+<<<<<<< HEAD
         const tableColumn = ["Nom", "Quantité", "Date d'ajout", "Fonction", "Type", "Informations"];
         const tableRows = equipments.map(equip => [
             equip.name,
@@ -742,6 +890,18 @@ document.addEventListener('DOMContentLoaded', () => {
             equip.role,
             equip.type,
             equip.additionalInfo || ''
+=======
+        const tableColumn = ["Nom", "Quantité", "Date d'ajout", "Fonction", "Type", "Quantité Faible", "Informations", "Action"];
+        const tableRows = equipment.map(equip => [
+            equip.name,
+            equip.quantity,
+            equip.dateAdded,
+            equip.function,
+            equip.type,
+            equip.isLowStock ? 'Oui' : 'Non',
+            equip.additionalInfo,
+             // Empty action column for PDF
+>>>>>>> 0ed9499a2af5648586dea5ca2f414cc885591eee
         ]);
 
         doc.setFontSize(16);
@@ -774,15 +934,22 @@ document.addEventListener('DOMContentLoaded', () => {
     window.downloadDevicesPDF = downloadDevicesPDF;
     window.downloadEquipmentPDF = downloadEquipmentPDF;
     window.showMedicationForm = showMedicationForm;
+<<<<<<< HEAD
     window.showDeviceForm = showDeviceForm;
     window.showEquipmentForm = showEquipmentForm;
+=======
+>>>>>>> 0ed9499a2af5648586dea5ca2f414cc885591eee
     window.deleteMedication = deleteMedication;
     window.deleteDevice = deleteDevice;
     window.deleteEquipment = deleteEquipment;
     
     // Initialize
     initializeApp();
+<<<<<<< HEAD
 });
 
 // Make sure editingIndex is accessible globally
 window.editingIndex = -1;
+=======
+});
+>>>>>>> 0ed9499a2af5648586dea5ca2f414cc885591eee
