@@ -8,6 +8,9 @@
     <link rel="stylesheet" href="css/dashboard/dashstyle.css">
     <script src="js/jspdf.umd.min.js"></script>
     <script src="js/jspdf.plugin.autotable.min.js"></script>
+    <script src="js/pdf/formatPdf.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/date-fns@3.6.0/cdn.min.js"></script>
+
     <style>
         @font-face {
             font-family: 'LexendDeca';
@@ -15,6 +18,7 @@
         }
 
         body {
+            background-color: black;
             font-family: 'LexendDeca', sans-serif;
         }
 
@@ -36,7 +40,7 @@
                 <a href="notif.html" class="text-lg hover:text-green-600">Quantités insuffisantes</a>
                 <a href="report.html" class="text-lg hover:text-green-600">Rapports de ventes</a>
                 <a href="received.html" class="text-lg hover:text-green-600">Rapports de réceptions</a>
-                <a href="perfil.html" class="text-lg hover:text-green-600">Profil</a>
+                <a href="profile.html" class="text-lg hover:text-green-600">Profil</a>
                 <a href="index.html" class="text-lg text-red-600 hover:text-red-800">Déconnexion</a>
             </nav>
         </div>
@@ -59,23 +63,20 @@
 
                 <div>
                     <label for="product" class="block text-gray-700">Produit</label>
-                    <div class="relative">
-                        <input type="text" id="product" placeholder="Rechercher un produit..." class="w-full border border-gray-300 rounded-lg p-2" list="product-list">
-                        <datalist id="product-list">
-                            <option value="Produit 1">
-                            <option value="Produit 2">
-                            <option value="Produit 3">
-                        </datalist>
-                    </div>
+                    
+                    <select type="text" id="product" placeholder="Rechercher un produit..." class="w-full border border-gray-300 rounded-lg p-2">
+                        <option value="">Sélectionnez un produit</option>
+                    </select>
                 </div>
 
                 <div>
                     <label for="current-stock" class="block text-gray-700">Quantité Actuelle en Stock</label>
-                    <input type="number" id="current-stock" readonly class="w-full border border-gray-300 rounded-lg p-2 bg-gray-100">
+                    <input type="number" id="current-stock" readonly
+                        class="w-full border border-gray-300 rounded-lg p-2 bg-gray-100">
                 </div>
                 <div>
                     <label for="current-stock" class="block text-gray-700">Date de transfert</label>
-                    <input type="date" id="" required class="w-full border border-gray-300 rounded-lg p-2">
+                    <input type="date" id="data-tranferenc" required class="w-full border border-gray-300 rounded-lg p-2">
                 </div>
                 <div>
                     <label for="transfer-quantity" class="block text-gray-700">Quantité à Transférer</label>
@@ -105,16 +106,18 @@
                     <label for="report-product-type" class="block text-gray-700">Type de Produit</label>
                     <select id="report-product-type" class="w-full border border-gray-300 rounded-lg p-2">
                         <option value="all-product">Tous les produits</option>
-                        <option value="medicament">Médicament</option>
-                        <option value="equipement">Équipement Médical</option>
-                        <option value="appareil">Appareil Médical</option>
+                        <option value="medications" selected>Médicament</option>
+                        <option value="equipements">Équipement Médical</option>
+                        <option value="devices">Appareil Médical</option>
                     </select>
                 </div>
+
+                <button type="button" id="filter-button" class="bg-green-400 hover:bg-green-500 text-white font-bold py-2 px-4 rounded-lg shadow-md">Appliquer les filtres</button>
 
                 <button type="button" class="bg-blue-400 hover:bg-blue-500 text-black py-2 px-4 rounded-lg" onclick="generatePDFReport()">Télécharger Rapport PDF</button>
             </form>
 
-            <table class="min-w-full bg-white mt-4">
+            <table class="min-w-full bg-white mt-4" id="products-received-table">
                <thead>
                     <tr class="bg-green-300 text-black">
                         <th class="py-3 px-6 text-center border-b border-gray-300">Nom de l'appareil</th>
@@ -137,10 +140,9 @@
     </main>
 
     <script src="js/db.js" type="module"></script>
-    <script src="js/dashboard/index.js"></script>
+    <!-- <script src="js/dashboard/index.js" type="module"></script> -->
+    <script src="js/sent/table.js" type="module"></script>
     <script src="js/sent/index.js" type="module"></script>
-    <script src="js/pdf/formatPdf.js"></script>
-
     <script>
         function generatePDFReport() {
 
@@ -164,7 +166,6 @@
                     ["Produit B", "30", "10", "20"]
                 ],
                 margin: { top: 100 }
-
             };
             formatPdf('Estimation Totale des Stocks', description, autoTable, 'rapport_transfert.pdf')
         }
